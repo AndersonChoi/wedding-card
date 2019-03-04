@@ -71,23 +71,6 @@ body {
 }
 
 
-.bottom_right{
-  overflow: hidden;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  margin: 0px 15px 15px 15px;
-}
-
-.bottom_left{
-  overflow: hidden;
-  position: fixed;
-  text-align: right;
-  bottom: 0;
-  left: 0;
-  margin: 0px 15px 15px 15px;
-}
-
 [tabindex="-1"]:focus {
     outline: 0 !important;
 }
@@ -519,7 +502,7 @@ mark,
 }
 
 .map-icon {
-    width: 37px;
+    width: 48px;
     height: auto;
     margin-left: 5px;
     margin-right: 5px;
@@ -4970,6 +4953,10 @@ tbody.collapse.show {
     margin-bottom: 0.75rem;
 }
 
+.gift-columns .gift {
+    margin-bottom: 0.75rem;
+}
+
 @media (min-width: 576px) {
     .card-columns {
         -webkit-column-count: 3;
@@ -4982,6 +4969,42 @@ tbody.collapse.show {
         display: inline-block;
         width: 100%;
     }
+}
+
+@media (min-width: 576px) {
+    .gift-columns {
+        -webkit-column-count: 6;
+        column-count: 6;
+        -webkit-column-gap: 1.25rem;
+        column-gap: 1.25rem;
+    }
+
+    .gift-columns .gift {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+.gift-img {
+    border: 1px lightgrey;
+}
+
+.gift-btn {
+    width: 50%;
+    height: 40px;
+    margin: -0.1em;
+    border-color: lightgrey;
+    background: white;
+    font-family: 'Noto Serif KR', serif;
+}
+
+.gift-selected {
+    filter: brightness(50%);
+}
+
+.gift-message {
+    width: 100%;
+    border-color: lightgrey;
 }
 
 .breadcrumb {
@@ -6436,6 +6459,12 @@ a.bg-danger:hover, a.bg-danger:focus,
 button.bg-danger:hover,
 button.bg-danger:focus {
     background-color: #bd2130 !important;
+}
+
+.bg-gift {
+    background: url("../images/gift/gift-background.png") no-repeat;
+    width: 100%;
+    background-size: cover;
 }
 
 .bg-light {
@@ -9865,7 +9894,17 @@ body {
     min-height: 500px;
 }
 
+.ww-gift-section .ww-gift {
+    min-height: 100px;
+}
+
 .ww-photo-gallery .card-columns .card {
+    border: none;
+    margin-bottom: 15px;
+    border-radius: none;
+}
+
+.ww-gift-section .gift-columns .gift {
     border: none;
     margin-bottom: 15px;
     border-radius: none;
@@ -9878,6 +9917,13 @@ body {
     }
 }
 
+@media (max-width: 992px) {
+    .ww-gift-section .gift-columns {
+        -webkit-column-count: 3;
+        column-count: 3;
+    }
+}
+
 @media (max-width: 576px) {
     .ww-photo-gallery .card-columns {
         -webkit-column-count: 1;
@@ -9885,9 +9931,16 @@ body {
     }
 }
 
+@media (max-width: 576px) {
+    .ww-gift-section .gift-columns {
+        -webkit-column-count: 3;
+        column-count: 3;
+    }
+}
+
 /* RSVP Style */
 .ww-rsvp-detail {
-    background: url("../images/rsvp-img.jpg") no-repeat center center;
+    background: no-repeat center center;
     background-size: cover;
     min-height: 500px;
     position: relative;
@@ -9985,4 +10038,22 @@ body {
 
 .btn-outline-primary:hover {
     color: #fff;
+}
+
+
+.bottom_right {
+    overflow: hidden;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 0px 15px 15px 15px;
+}
+
+.bottom_left {
+    overflow: hidden;
+    position: fixed;
+    text-align: right;
+    bottom: 0;
+    left: 0;
+    margin: 0px 15px 15px 15px;
 }
