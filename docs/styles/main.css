@@ -70,6 +70,24 @@ body {
     background-color: #fff;
 }
 
+
+.bottom_right{
+  overflow: hidden;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 0px 15px 15px 15px;
+}
+
+.bottom_left{
+  overflow: hidden;
+  position: fixed;
+  text-align: right;
+  bottom: 0;
+  left: 0;
+  margin: 0px 15px 15px 15px;
+}
+
 [tabindex="-1"]:focus {
     outline: 0 !important;
 }
