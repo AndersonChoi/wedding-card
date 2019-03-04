@@ -5,6 +5,11 @@ $(document).ready(function () {
     {
 
     }
+
+    $('#go-to-top').click(function () {
+        $('html,body').animate({scrollTop: 0}, 400);
+        return false;
+    });
 });
 
 // Smooth scroll for links with hashes
