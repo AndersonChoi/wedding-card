@@ -15,8 +15,28 @@
     <link href="styles/main.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Gamja+Flower|Gugi|Noto+Serif+KR|Stylish|Sunflower:300"
           rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-2.2.1.js"></script>
+
 
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        function sendMail() {
+
+            (function () {
+                emailjs.init("user_yjLL5xG0A3kkOCH5BGIDh");
+                emailjs.send("wedding-mail", "gift_send", {
+                    name: $("#sender-name").value,
+                    gift: $("#gift-name").text(),
+                    message: $("#sender-message").value
+                }).then(function (response) {
+                    console.log("SUCCESS. status=%d, text=%s", response.status, response.text);
+                }, function (err) {
+                    console.log("FAILED. error=", err);
+                });
+            })();
+        }
+    </script>
 </head>
 
 <body id="top">
@@ -362,15 +382,15 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">보내는 분</span>
                     </div>
-                    <input aria-describedby="basic-addon3" class="form-control" type="text">
+                    <input aria-describedby="basic-addon3" class="form-control" id="sender-name" type="text">
                 </div>
                 <div class="input-group">
-                    <textarea aria-label="With textarea" class="form-control" placeholder="메시지를 입력해주세요"
-                              rows=4></textarea>
+                    <textarea aria-label="With textarea" class="form-control" id="sender-message"
+                              placeholder="메시지를 입력해주세요" rows=4></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" type="button">예약하기!</button>
+                <button class="btn btn-primary" id="reserveGiftButton" type="button">예약하기!</button>
             </div>
         </div>
     </div>
