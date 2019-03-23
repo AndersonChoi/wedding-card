@@ -10,6 +10,10 @@ $(document).ready(function () {
         $('html,body').animate({scrollTop: 0}, 400);
         return false;
     });
+
+    $(".gift-send").click(function () {
+        $("#gift-name").text($(this).data("name"));
+    })
 });
 
 // Smooth scroll for links with hashes
@@ -48,15 +52,3 @@ $("a.smooth-scroll").click(function (event) {
         }
     }
 });
-
-function openGoogleMap() {
-
-}
-
-function openNaverMap() {
-
-}
-
-function openKakaoMap() {
-
-}

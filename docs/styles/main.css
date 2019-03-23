@@ -4990,9 +4990,7 @@ tbody.collapse.show {
 }
 
 .gift-btn {
-    width: 50%;
-    height: 40px;
-    margin: -0.1em;
+    margin: auto;
     border-color: lightgrey;
     background: white;
     font-family: 'Noto Serif KR', serif;
