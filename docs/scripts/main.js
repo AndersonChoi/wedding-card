@@ -29,12 +29,14 @@ $(document).ready(function () {
             message: message
         }).then(function (response) {
             $('#giftMailModal').modal('hide');
+            alert(name + "님의 메시지가 정상적으로 전송되었습니다.");
+
             $("#reserveGiftButton").text("예약하기!");
             $("#sender-name").val('');
             $("#sender-message").val('');
             $("#reserveGiftButton").prop("disabled", false);
         }, function (err) {
-            console.log("FAILED. error=", err);
+            alert("메시지 전송이 실패했습니다. 다시 시도해주세요.");
         });
     })
 })
