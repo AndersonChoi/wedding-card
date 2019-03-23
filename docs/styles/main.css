@@ -3539,6 +3539,10 @@ tbody.collapse.show {
     white-space: nowrap;
 }
 
+.gift-btn-group {
+    width: 100% !important;
+}
+
 .btn-group,
 .btn-group-vertical {
     position: relative;
@@ -4990,9 +4994,8 @@ tbody.collapse.show {
 }
 
 .gift-btn {
-    width: 50%;
-    height: 40px;
-    margin: -0.1em;
+    margin: auto;
+    width: 100%;
     border-color: lightgrey;
     background: white;
     font-family: 'Noto Serif KR', serif;
