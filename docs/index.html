@@ -23,6 +23,7 @@
 
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.js" type="text/javascript"></script>
     <script type="text/javascript">
         function sendMail() {
 
@@ -39,6 +40,27 @@
                 });
             })();
         }
+
+        $(document).ready(function () {
+
+            function getText(){
+                var result = null;
+                $.ajax( { url: "https://raw.githubusercontent.com/AndersonChoi/wedding-card/master/README.md",
+                        type: 'get',
+                        dataType: 'html',
+                        async: false,
+                        success: function(data) { result = data; }
+                    }
+                );
+                FileReady = true;
+                return result;
+            }
+            var markdown_source = getText();
+            var comment_contents = markdown_source.split("축하의 말")[1];
+
+            var md = new Remarkable();
+            $("#comments").append(md.render(comment_contents));
+        });
     </script>
 </head>
 
@@ -340,16 +362,16 @@
             </div>
         </div>
 
-        <!--<div class="ww-section bg-light" id="comment">
+        <div class="ww-section bg-light" id="comment">
             <div class="ww-photo-gallery">
                 <div class="container">
                     <div class="col text-center">
-                        <h2 class="h1 text-center pb-3 ww-title" style="font-family: 'Noto Serif KR', serif;">축하메시지 남기기</h2>
-                        <div class="fb-comments" data-href="https://andersonchoi.github.io/wedding-card/" data-numposts="10"></div>
+                        <h2 class="h1 text-center pb-3 ww-title" style="font-family: 'Noto Serif KR', serif;">축하메시지</h2><br>
+                        <div id="comments"></div>
                     </div>
                 </div>
             </div>
-        </div>-->
+        </div>
 
     </div>
 </div>
