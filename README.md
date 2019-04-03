@@ -54,3 +54,6 @@ sudo forever start happyMarriage.js
 
 ### 원영이랑 쪼금 친한 누나
 원영아 결혼 정말 축하하구 신부도 정말 이쁘다 ㅎ 잘살아 히힛
+
+### 부산대 백수
+원영이형 소민이 결혼 정말 축하드려요!!!, while(true) { 최원영 = 이소민 = :heart:; }
