@@ -57,3 +57,13 @@ sudo forever start happyMarriage.js
 
 ### 부산대 백수
 원영이형 소민이 결혼 정말 축하드려요!!!, while(true) { 최원영 = 이소민 = :heart:; }
+
+### 쿠팡X 김범석
+원영씨 축하해요~ 
+청첩장 정말 잘 만들었네 ㅋㅋㅋㅋㅋ
+코드 쓰고 싶게 만드는 청첩장이야 ㅋㅋㅋ
+val choileeMarriage = Marriage.Builder()
+  .addEvent("결혼식")
+  .addLocation("부산광역시 해운대구 센텀시티 센텀사이언스파크 23층")
+  .addDateTime("2019년 5월 18일 14시 30분")
+  .build();
