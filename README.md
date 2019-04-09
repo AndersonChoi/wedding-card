@@ -67,3 +67,6 @@ val choileeMarriage = Marriage.Builder()
   .addLocation("부산광역시 해운대구 센텀시티 센텀사이언스파크 23층")
   .addDateTime("2019년 5월 18일 14시 30분")
   .build();
+  
+### 한정현 (원영님 같은팀 동료)  
+원영님 결혼 축하 드립니다 :) 청첩장도 이쁘네요^~^ 행복하게 사세요 !!   
