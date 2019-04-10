@@ -79,3 +79,20 @@ val choileeMarriage = Marriage.Builder()
 
 ### 임유빈 (위 사람 맞은 편 앉은 사람)
 경) 결 혼 축 하 (축
+
+### 정태양
+<html>
+    <head>
+        <style type="text/css">
+          .celebrtion {color: blue;}
+        </style>
+    </head>
+    <body>
+        <div class="celebration">원영이형! 결혼 축하드려요!!!</div>
+        <div class="text">
+            github으로 청첩장 만드는 사람 처음봤어요 ㅋㅋㅋㅋ 진짜 잘 만들었고<br>
+            아이디어가 너무 좋은거 같아요 저도 나중에 사용해야겠어요ㅎㅎ<br>
+            다시 한번 결혼 축하드리고 행복하세요!!!!!
+        </div>
+    </body>
+</html>
