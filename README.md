@@ -84,4 +84,4 @@ val choileeMarriage = Marriage.Builder()
 cat << EOF\
 원영이형 결혼 정말 축하해!!\
 오래오래 행복하게 살아~~\
-EOF\
+EOF
