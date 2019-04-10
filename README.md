@@ -96,3 +96,10 @@ val choileeMarriage = Marriage.Builder()
         </div>
     </body>
 </html>
+
+### 임승민 (전직장 동료)
+cat << EOF\
+원영이형 결혼 정말 축하해!!\
+오래오래 행복하게 살아~~\
+EOF
+
