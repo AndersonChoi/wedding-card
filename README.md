@@ -81,7 +81,7 @@ val choileeMarriage = Marriage.Builder()
 경) 결 혼 축 하 (축
 
 ### 임승민 (전직장 동료)
-cat << EOF\n
-원영이형 결혼 정말 축하해!!\n
-오래오래 행복하게 살아~~\n
-EOF\n
+cat << EOF\
+원영이형 결혼 정말 축하해!!\
+오래오래 행복하게 살아~~\
+EOF\
