@@ -6,4 +6,5 @@
 
 * 날짜 : 2023년 7월 9일 12시 00분
 * 장소 : WI 컨벤션 웨딩홀 W홀
+
 * 청첩장 url : https://woocheolhee.github.io/wedding-card/
