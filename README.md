@@ -1,4 +1,4 @@
-# 우철희과 이선영의 영결혼식 모바일 청첩장
+# 우철희과 이선영의 결혼식 모바일 청첩장
 
 ![메인사진](https://github.com/woocheolhee/wedding-card/raw/master/docs/images/main-background.jpg)
 
