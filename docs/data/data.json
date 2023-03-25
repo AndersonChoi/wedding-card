@@ -1,0 +1,41 @@
+couple=
+{
+  "groom": {
+    "accounts": [
+      {
+        "holder_name": "우철희",
+        "bank_name": "신한은행",
+        "bank_account_number": "110453795842"
+      },
+      {
+        "holder_name": "우광성",
+        "bank_name": "농협",
+        "bank_account_number": "20710251027669"
+      },
+      {
+        "holder_name": "장인숙",
+        "bank_name": "신한은행",
+        "bank_account_number": "110423567032"
+      }
+    ]
+  },
+  "bride": {
+    "accounts": [
+      {
+        "holder_name": "이선영",
+        "bank_name": "카카오뱅크",
+        "bank_account_number": "3333011168174"
+      },
+      {
+        "holder_name": "이형표",
+        "bank_name": "OO은행",
+        "bank_account_number": "123123"
+      },
+      {
+        "holder_name": "이광옥",
+        "bank_name": "OO은행",
+        "bank_account_number": "123123"
+      }
+    ]
+  }
+}

@@ -11,35 +11,76 @@ $(document).ready(function () {
         return false;
     });
 
-    $(".gift-send").click(function () {
-        $("#gift-name").text($(this).data("name"));
-    })
-
-
-    $("#reserveGiftButton").click(function () {
-        let name = $("#sender-name").val();
-        let message = $("#sender-message").val();
-        $("#reserveGiftButton").text("전송중...");
-        $("#reserveGiftButton").prop("disabled", true);
-
-        emailjs.init("user_yjLL5xG0A3kkOCH5BGIDh");
-        emailjs.send("wedding-mail", "gift_send", {
-            name: name,
-            gift: $("#gift-name").text(),
-            message: message
-        }).then(function (response) {
-            $('#giftMailModal').modal('hide');
-            alert(name + "님의 메시지가 정상적으로 전송되었습니다.");
-
-            $("#reserveGiftButton").text("예약하기!");
-            $("#sender-name").val('');
-            $("#sender-message").val('');
-            $("#reserveGiftButton").prop("disabled", false);
-        }, function (err) {
-            alert("메시지 전송이 실패했습니다. 다시 시도해주세요.");
-        });
-    })
+    setCoupleAccounts()
 })
+
+
+
+function rand(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function setCoupleAccounts() {
+    addGroomAccounts(couple.groom.accounts)
+    addBrideAccounts(couple.bride.accounts)
+}
+
+function addGroomAccounts(accounts) {
+    accounts.forEach(function(account) {
+        $("#groom-accounts").append(createAccountItemElement(account));
+    })
+}
+
+function addBrideAccounts(accounts) {
+    accounts.forEach(function(account) {
+        $("#bride-accounts").append(createAccountItemElement(account));
+    })
+}
+
+function createAccountItemElement(accountInfo) {
+    var plainText = {
+        bankName: accountInfo["bank_name"],
+        bankAccountNumber: accountInfo["bank_account_number"],
+        holderName: accountInfo["holder_name"],
+        qrLink: accountInfo["qr_link"]
+    }
+
+    if (plainText.qrLink)
+        return `<div class="dropdown-content-container">
+                   <div class="bank-account-item" onclick="copyToClipboard(this)">
+                   ${plainText.holderName} <span class="clipboard-target">${plainText.bankName} ${plainText.bankAccountNumber}</span> &nbsp;&nbsp;<i class="fa fa-files-o" aria-hidden="true"></i>
+                       <br>
+                   </div>
+                   <div class="quick-link-item">
+                       <a href="${plainText.qrLink}" target="_blank"><img class="map-icon" src="images/icon/pay-logo.png" style="width: 30px"/></a>
+                   </div>
+               </div>`
+    else
+        return `<div class="dropdown-content-container">
+                    <div class="bank-account-item" onclick="copyToClipboard(this)">
+                    ${plainText.holderName} <span class="clipboard-target">${plainText.bankName} ${plainText.bankAccountNumber}</span> &nbsp;&nbsp;<i class="fa fa-files-o" aria-hidden="true"></i>
+                        <br>
+                   </div>
+               </div>`
+}
+
+function getContact(coupleType, prefix) {
+    console.log(prefix + ":" + decodeAES256(couple[coupleType]["phone_number"]))
+    document.location.href = prefix + ":" + decodeAES256(couple[coupleType]["phone_number"])
+}
+
+// 레거시 브라우저 문제로 아래 방법으로 바꿈
+function copyToClipboard(e) {
+    var element = document.createElement("textarea");
+    element.value = $(e).children('.clipboard-target').text();
+    document.body.appendChild(element)
+    element.select();
+    document.execCommand("copy");
+    document.body.removeChild(element);
+    alert('클립보드에 복사하였습니다.')
+}
+
+
 
 // Smooth scroll for links with hashes
 $("a.smooth-scroll").click(function (event) {

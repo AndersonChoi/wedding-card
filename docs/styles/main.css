@@ -10059,3 +10059,69 @@ body {
     left: 0;
     margin: 0px 15px 15px 15px;
 }
+
+.dropdown-container {
+    min-width: 150px;
+    box-shadow: 0 4px 5px 0 #00000026;
+    position: relative;
+    z-index: 10;
+    font-family:Nato Sans Korean;
+    font-size:1em;
+  }
+  
+  .dropdown-label {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+  }
+  
+  .dropdown-label:hover {
+    cursor: pointer;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    background: white;
+    box-shadow: 0 4px 5px 0 #00000026;
+    margin-top: -9px;
+    font-size: 0.9em
+  }
+  
+  .dropdown-input:checked + label + div.dropdown-content {
+    display: block;
+    border-top: 1px solid #00000026;
+  }
+  
+  .caretIcon {
+    transition: transform 250ms ease-out;
+  }
+  
+  .dropdown-input:checked + label > .caretIcon {
+    transform: rotate(-180deg);
+  }
+  
+  .dropdown-content ul {
+    list-style-type: none;
+    padding: 12px;
+    margin: 0;
+  }
+  
+  .dropdown-content-container {
+    display: flex;
+    align-items: center;
+    margin: 10px
+  }
+  
+  .bank-account-item {
+    width: 70%;
+    text-align: left;
+  }
+  
+  .quick-link-item {
+    margin-left: auto;
+    width: 30%;
+    text-align: center;
+  }
