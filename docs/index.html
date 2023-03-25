@@ -269,9 +269,26 @@
                                 </label>
                             </div>
                             <div class="my-3">
-                                <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3174.3385168067725!2d127.03503141609774!3d37.28711014280288!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357b5ca6350de1df%3A0x26a46ff33d6ebd52!2z6rK96riw64-EIOyImOybkOyLnCDtjJTri6zqtawg7Jqw66eMMeuPmSDsm5Trk5zsu7XroZwgMzEw!5e0!3m2!1sko!2skr!4v1574407994283!5m2!1sko!2skr"
-                                    width="100%" height="400" frameborder="0" style="border:0" allowfullscreen></iframe>
+                                <!-- * 카카오맵 - 지도퍼가기 -->
+                                <!-- 1. 지도 노드 -->
+                                <div id="daumRoughmapContainer1679753795194"
+                                    class="root_daum_roughmap root_daum_roughmap_landing" style="width:100%;"></div>
+
+                                <!--
+                                    2. 설치 스크립트
+                                    * 지도 퍼가기 서비스를 2개 이상 넣을 경우, 설치 스크립트는 하나만 삽입합니다.
+                                -->
+                                <script charset="UTF-8" class="daum_roughmap_loader_script"
+                                    src="https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js"></script>
+
+                                <!-- 3. 실행 스크립트 -->
+                                <script charset="UTF-8">
+                                    new daum.roughmap.Lander({
+                                        "timestamp": "1679753795194",
+                                        "key": "2e7un",
+                                        "mapHeight": "400"
+                                    }).render();
+                                </script>
                             </div>
                         </div>
                     </div>
