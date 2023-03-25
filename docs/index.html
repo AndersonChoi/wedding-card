@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en-US">
+
 <head>
     <meta charset="UTF-8">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <title>우철희와 이선영의 결혼식</title>
-    <meta content="우철희와 우철희의 결혼식에 와서 축하해주세요~!" name="description"/>
+    <meta content="우철희와 우철희의 결혼식에 와서 축하해주세요~!" name="description" />
     <meta property="og:image" content="images/pic2.jpg">
     <link href="images/favicon/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
     <link href="images/favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
@@ -15,7 +16,7 @@
     <link href="css/ekko-lightbox.css" rel="stylesheet">
     <link href="styles/main.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Gamja+Flower|Gugi|Noto+Serif+KR|Stylish|Sunflower:300"
-          rel="stylesheet">
+        rel="stylesheet">
     <script src="https://code.jquery.com/jquery-2.2.1.js"></script>
 
 
@@ -46,22 +47,23 @@
                 .substr(1)
                 .split("&")
                 .forEach(function (item) {
-                  tmp = item.split("=");
-                  if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+                    tmp = item.split("=");
+                    if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
                 });
             return result;
         }
 
         $(document).ready(function () {
 
-            function getText(){
+            function getText() {
                 var result = null;
-                $.ajax( { url: "https://raw.githubusercontent.com/woocheolhee/wedding-card/master/README.md",
-                        type: 'get',
-                        dataType: 'html',
-                        async: false,
-                        success: function(data) { result = data; }
-                    }
+                $.ajax({
+                    url: "https://raw.githubusercontent.com/woocheolhee/wedding-card/master/README.md",
+                    type: 'get',
+                    dataType: 'html',
+                    async: false,
+                    success: function (data) { result = data; }
+                }
                 );
                 FileReady = true;
                 return result;
@@ -72,8 +74,8 @@
             var md = new Remarkable();
             $("#comments").append(md.render(comment_contents));
 
-            
-            if(findGetParameter('gift')=='false'){
+
+            if (findGetParameter('gift') == 'false') {
                 $('#gifts').hide();
             }
         });
@@ -85,235 +87,317 @@
 </head>
 
 <body id="top">
-<header></header>
-<div id="fb-root"></div>
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/ko_KR/sdk.js#xfbml=1&version=v3.2"></script>
-<div class="page-content">
-    <div class="div">
-        <div class="ww-home-page" id="home">
-            <div class="ww-wedding-announcement d-flex align-items-center justify-content-start">
-                <div class="container ww-announcement-container">
-                    <p class="ww-couple-name ww-title" style="font-size:3.6em">Cheolhee & Sunyoung</p>
-                    <p class="h2 mt-5 ww-title" style="font-family: 'Gugi', cursive; font-size:1.0em">
-                        | WE ARE GETTING MARRIED |
-                    </p>
-                    <p class="h2 mt-5 ww-title"
-                       style="font-family: 'Noto Serif KR', serif; font-size:1.0em; letter-spacing:-1px">
-                        <b style="font-size:1.4em;">2023. 07. 09. SUN PM 12:00</b>
-                        <br>
-                        <br>WI컨벤션웨딩홀 W홀
-                        <br>경기 수원시 팔달구 월드컵로 310 
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="ww-nav-bar sticky-top bg-light">
-            <nav class="navbar navbar-expand-lg navbar-light">
-                <div class="container">
-                    <button aria-controls="ww-navbarNav" aria-expanded="false" aria-label="Toggle navigation"
-                            class="navbar-toggler"
-                            data-target="#ww-navbarNav" data-toggle="collapse" type="button">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse text-uppercase" id="ww-navbarNav">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item"><a class="nav-link smooth-scroll" href="#home">Home</a></li>
-                            <li class="nav-item"><a class="nav-link smooth-scroll" href="#couple">Couple</a></li>
-                            <li class="nav-item"><a class="nav-link smooth-scroll" href="#events">Events</a></li>
-                            <li class="nav-item"><a class="nav-link smooth-scroll" href="#gallery">Gallery</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </div>
-        <div class="ww-section" id="couple">
-            <div class="container">
-                <h2 class="h1 text-center pb-3 ww-title" style="font-family: 'Noto Serif KR', serif;">신랑 & 신부</h2>
-                <div class="row text-center">
-                    <div class="col-md-6">
-                        <div class="mt-3">
-                            <h3 class="h2 ww-title" style="font-family: 'Sunflower', sans-serif; font-size:1.5em">
-                                이선영</h3>
-                            <img alt="Groom" class="img-fluid" src="images/pic_sy.jpg"/>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mt-3">
-                            <h3 class="h2 ww-title" style="font-family: 'Sunflower', sans-serif; font-size:1.5em">
-                                우철희</h3>
-                            <img alt="Bride" class="img-fluid" src="images/pic_ch.jpg"/>
-                        </div>
+    <header></header>
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous"
+        src="https://connect.facebook.net/ko_KR/sdk.js#xfbml=1&version=v3.2"></script>
+    <div class="page-content">
+        <div class="div">
+            <div class="ww-home-page" id="home">
+                <div class="ww-wedding-announcement d-flex align-items-center justify-content-start">
+                    <div class="container ww-announcement-container">
+                        <p class="ww-couple-name ww-title" style="font-size:3.6em">Cheolhee & Sunyoung</p>
+                        <p class="h2 mt-5 ww-title" style="font-family: 'Gugi', cursive; font-size:1.0em">
+                            | WE ARE GETTING MARRIED |
+                        </p>
+                        <p class="h2 mt-5 ww-title"
+                            style="font-family: 'Noto Serif KR', serif; font-size:1.0em; letter-spacing:-1px">
+                            <b style="font-size:1.4em;">2023. 07. 09. SUN PM 12:00</b>
+                            <br>
+                            <br>WI컨벤션웨딩홀 W홀
+                            <br>경기 수원시 팔달구 월드컵로 310
+                        </p>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="ww-section bg-light" id="events">
-            <div class="container ww-wedding-event">
-                <h2 class="h1 text-center pb-3 ww-title" style="font-family: 'Noto Serif KR', serif;">초대합니다</h2>
-                    <div class="col text-center mb-5">
-                        <h6 style="font-family: 'Noto Serif KR', serif;">
-                        </h6>
-                    </div>
-                <div class="row">
-                    <div class="col-md-7 col-sm-12">
-                        <div class="my-3">
-                            <div class="h4">웨딩 본식</div>
-                            <ul>
-                                <li>
-                                    <i class="text-muted fas fa-map-marker-alt"></i>
-                                    <span class="pl-2 text-muted">WI컨벤션웨딩홀 W홀 / 경기 수원시 팔달구 월드컵로 310</span>
+            <div class="ww-nav-bar sticky-top bg-light">
+                <nav class="navbar navbar-expand-lg navbar-light">
+                    <div class="container">
+                        <button aria-controls="ww-navbarNav" aria-expanded="false" aria-label="Toggle navigation"
+                            class="navbar-toggler" data-target="#ww-navbarNav" data-toggle="collapse" type="button">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse text-uppercase" id="ww-navbarNav">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item"><a class="nav-link smooth-scroll" href="#home">Home</a></li>
+                                <li class="nav-item"><a class="nav-link smooth-scroll" href="#invitation">Invitation</a>
                                 </li>
-                                <li class="pt-2">
-                                    <i class="text-muted far fa-calendar-alt"></i>
-                                    <span class="pl-2 text-muted">2023년 7월 9일, 12:00PM</span>
-                                </li>
+                                <li class="nav-item"><a class="nav-link smooth-scroll" href="#couple">Couple</a></li>
+                                <li class="nav-item"><a class="nav-link smooth-scroll" href="#events">Events</a></li>
+                                <li class="nav-item"><a class="nav-link smooth-scroll" href="#map">Map</a></li>
+                                <li class="nav-item"><a class="nav-link smooth-scroll" href="#gallery">Gallery</a></li>
+                                <li class="nav-item"><a class="nav-link smooth-scroll" href="#account">Heart</a></li>
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-5 col-sm-12">
-                        <div class="my-3">
-                            <img alt="Wedding Party" class="img-fluid" src="images/wedding-party.jpeg"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-7 col-sm-12">
-                        <div class="my-3">
-                            <div class="h4">식사</div>
-                            <ul>
-                                <li>
-                                    <i class="text-muted fas fa-map-marker-alt "></i>
-                                    <span class="pl-2 text-muted">WI컨벤션웨딩홀 2층 라메르i </span>
-                                </li>
-                                <li class="pt-2">
-                                    <i class="text-muted far fa-calendar-alt "></i>
-                                    <span class="pl-2 text-muted">2023년 7월 9일, 12:00PM - 2:00PM</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-5 col-sm-12">
-                        <div class="my-3"><img alt="Reception" class="img-fluid" src="images/reception.jpg"/></div>
-                    </div>
-                </div>
+                </nav>
             </div>
-        </div>
-        <div class="ww-section" id="gallery">
-            <div class="ww-photo-gallery">
+            <div class="ww-section " id="invitation">
                 <div class="container">
-                    <h2 class="h1 text-center pb-3 ww-title" style="font-family: 'Noto Serif KR', serif;">포토 갤러리</h2>
-                    <div class="ww-gallery">
-                        <div class="card-columns">
-                            <div class="card" data-groups="[&quot;party&quot;,&quot;wedding&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 1" class="img-fluid" src="images/pic1.jpg"/>
-                                </a>
-                            </div>
-                            <div class="card" data-groups="[&quot;vacation&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 2" class="img-fluid" src="images/pic2.jpg"/>
-                                </a>
-                            </div>
-                            <div class="card" data-groups="[&quot;party&quot;,&quot;vacation&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 3" class="img-fluid" src="images/pic3.jpg"/>
-                                </a>
-                            </div>
-                            <div class="card" data-groups="[&quot;vacation&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 4" class="img-fluid" src="images/pic4.jpg"/>
-                                </a>
-                            </div>
-                            <div class="card"
-                                 data-groups="[&quot;wedding&quot;,&quot;ceremony&quot;,&quot;party&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 5" class="img-fluid" src="images/pic5.jpg"/>
-                                </a>
-                            </div>
-                            <div class="card" data-groups="[&quot;vacation&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 6" class="img-fluid" src="images/pic6.jpg"/>
-                                </a>
-                            </div>
-                            <div class="card" data-groups="[&quot;vacation&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 7" class="img-fluid" src="images/pic7.jpg"/>
-                                </a>
-                            </div>
-                            <div class="card" data-groups="[&quot;vacation&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 8" class="img-fluid" src="images/pic8.jpg"/>
-                                </a>
-                            </div>
-                            <div class="card" data-groups="[&quot;vacation&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 9" class="img-fluid" src="images/pic9.jpg"/>
-                                </a>
-                            </div>
-                            <div class="card" data-groups="[&quot;vacation&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 10" class="img-fluid" src="images/pic10.jpg"/>
-                                </a>
-                            </div>
+                    <h2 class="h2 text-center pb-3">초대합니다.</h2>
+                    <div class="container">
+                        <div class="my-3">
+                            <img alt="Groom" src="images/calendar.png" width="100%" />
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="ww-section ww-rsvp-detail" id="map">
-            <div class="container">
-                <div class="col text-center">
-                    <h2 class="h1 text-center pb-3 ww-title" style="font-family: 'Noto Serif KR', serif;">오시는 길</h2>
-                    <div>
-                        <h5 style="font-family: 'Noto Serif KR', serif;">WI 컨벤션 웨딩홀 W홀</h5>
-                        <h6 style="font-family: 'Noto Serif KR', serif;">(경기 수원시 팔달구 월드컵로 310)</h6>
-                    </div>
-                </div>
+                        <div class="col text-center mb-5">
+                            <h5 align="left" style="font-family: 'Noto Serif KR', serif; line-height: 2.3em;">
+                                </br>
+                                <b>우</b>리의 인연은</br>
+                                <b>철</b> 모르던 시절 시작되어 7년이란 시간동안</br>
+                                <b>희</b>노애락을 거치며 더욱 견고해졌습니다.</br>
+                            </h5>
+                            <h5 align="left" style="font-family: 'Noto Serif KR', serif; line-height: 2.3em;">
+                                <b>이</b>제는 지혜롭고</br>
+                                <b>선</b>한 마음으로 서로를 아끼고 존중하며</br>
+                                <b>영</b>원한 인연을 맹세하겠습니다.</br></br>
+                            </h5>
 
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <div class="my-3 text-center">
-                            <a href="https://naver.me/FbRz2z3D">
-                                <img alt="naver-map" class="map-icon" id="naver-map"
-                                     src="images/map/naver-map.png"/>
-                            </a>
-                            <a href="http://kko.to/uFOPSBf5Lj">
-                                <img alt="kakao-map" class="map-icon" id="kakao-map"
-                                     src="images/map/kakao-map.png"/>
-                            </a>
-                            <a href="https://goo.gl/maps/B62zigSJJhFnpcr9A">
-                                <img alt="google-map" class="map-icon" id="google-map"
-                                     src="images/map/google-map.png"/>
-                            </a>
+                            <div class="text text-center"
+                                style="font-family: 'Noto Serif KR'; font-size:1.6em; line-height: 2.3em;">
+                                </br>
+                                <p>
+                                    우광성 · 장인숙 <span style="font-size:70%;">의 아들</span> 우철희
+                                    </br>
+                                    이형표 · 이광옥 <span style="font-size:70%;">의 딸　</span> 이선영
+                                </p>
+                                </br>
+                            </div>
                         </div>
-                        <div class="col text-center">
-                            <label style="font-family: 'Noto Serif KR', serif; font-size: 15px;">
-                                셔틀버스 - 수원시청역(분당선)-정시기준 약 20분 간격 (9번출구 앞)
+
+                    </div>
+                </div>
+            </div>
+            <div class="ww-section" id="couple">
+                <div class="container">
+                    <h2 class="h1 text-center pb-3 ww-title" style="font-family: 'Noto Serif KR', serif;">신랑 &
+                        신부</h2>
+                    <div class="row text-center">
+                        <div class="col-md-6">
+                            <div class="mt-3">
+                                <h3 class="h2 ww-title" style="font-family: 'Sunflower', sans-serif; font-size:1.5em">
+                                    이선영</h3>
+                                <img alt="Groom" class="img-fluid" src="images/pic_sy.jpg" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mt-3">
+                                <h3 class="h2 ww-title" style="font-family: 'Sunflower', sans-serif; font-size:1.5em">
+                                    우철희</h3>
+                                <img alt="Bride" class="img-fluid" src="images/pic_ch.jpg" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ww-section bg-light" id="events">
+                <div class="container ww-wedding-event">
+                    <div class="row">
+                        <div class="col-md-7 col-sm-12">
+                            <div class="my-3">
+                                <div class="h4">웨딩 본식</div>
+                                <ul>
+                                    <li>
+                                        <i class="text-muted fas fa-map-marker-alt"></i>
+                                        <span class="pl-2 text-muted">WI컨벤션웨딩홀 W홀 / 경기 수원시 팔달구 월드컵로 310</span>
+                                    </li>
+                                    <li class="pt-2">
+                                        <i class="text-muted far fa-calendar-alt"></i>
+                                        <span class="pl-2 text-muted">2023년 7월 9일, 12:00PM</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-5 col-sm-12">
+                            <div class="my-3">
+                                <img alt="Wedding Party" class="img-fluid" src="images/wedding-party.jpeg" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-7 col-sm-12">
+                            <div class="my-3">
+                                <div class="h4">식사</div>
+                                <ul>
+                                    <li>
+                                        <i class="text-muted fas fa-map-marker-alt "></i>
+                                        <span class="pl-2 text-muted">WI컨벤션웨딩홀 2층 라메르i </span>
+                                    </li>
+                                    <li class="pt-2">
+                                        <i class="text-muted far fa-calendar-alt "></i>
+                                        <span class="pl-2 text-muted">2023년 7월 9일, 12:00PM - 2:00PM</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-5 col-sm-12">
+                            <div class="my-3"><img alt="Reception" class="img-fluid" src="images/reception.jpg" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ww-section ww-rsvp-detail" id="map">
+                <div class="container">
+                    <div class="col text-center">
+                        <h2 class="h1 text-center pb-3 ww-title" style="font-family: 'Noto Serif KR', serif;">
+                            오시는 길</h2>
+                        <div>
+                            <h5 style="font-family: 'Noto Serif KR', serif;">WI 컨벤션 웨딩홀 W홀</h5>
+                            <h6 style="font-family: 'Noto Serif KR', serif;">(경기 수원시 팔달구 월드컵로 310)</h6>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="my-3 text-center">
+                                <a href="https://naver.me/FbRz2z3D">
+                                    <img alt="naver-map" class="map-icon" id="naver-map"
+                                        src="images/map/naver-map.png" />
+                                </a>
+                                <a href="http://kko.to/uFOPSBf5Lj">
+                                    <img alt="kakao-map" class="map-icon" id="kakao-map"
+                                        src="images/map/kakao-map.png" />
+                                </a>
+                                <a href="https://goo.gl/maps/B62zigSJJhFnpcr9A">
+                                    <img alt="google-map" class="map-icon" id="google-map"
+                                        src="images/map/google-map.png" />
+                                </a>
+                            </div>
+                            <div class="col text-center">
+                                <label style="font-family: 'Noto Serif KR', serif; font-size: 15px;">
+                                    셔틀버스 - 수원시청역(분당선)-정시기준 약 20분 간격 (9번출구 앞)
+                                </label>
+                            </div>
+                            <div class="my-3">
+                                <iframe
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3174.3385168067725!2d127.03503141609774!3d37.28711014280288!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357b5ca6350de1df%3A0x26a46ff33d6ebd52!2z6rK96riw64-EIOyImOybkOyLnCDtjJTri6zqtawg7Jqw66eMMeuPmSDsm5Trk5zsu7XroZwgMzEw!5e0!3m2!1sko!2skr!4v1574407994283!5m2!1sko!2skr"
+                                    width="100%" height="400" frameborder="0" style="border:0" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="ww-section" id="gallery">
+                <div class="ww-photo-gallery">
+                    <div class="container">
+                        <h2 class="h1 text-center pb-3 ww-title" style="font-family: 'Noto Serif KR', serif;">포토
+                            갤러리
+                        </h2>
+                        <div class="ww-gallery">
+                            <div class="card-columns">
+                                <div class="card" data-groups="[&quot;party&quot;,&quot;wedding&quot;]">
+                                    <a data-gallery="ww-gallery" data-toggle="lightbox">
+                                        <img alt="Gallery Pic 1" class="img-fluid" src="images/pic1.jpg" />
+                                    </a>
+                                </div>
+                                <div class="card" data-groups="[&quot;vacation&quot;]">
+                                    <a data-gallery="ww-gallery" data-toggle="lightbox">
+                                        <img alt="Gallery Pic 2" class="img-fluid" src="images/pic2.jpg" />
+                                    </a>
+                                </div>
+                                <div class="card" data-groups="[&quot;party&quot;,&quot;vacation&quot;]">
+                                    <a data-gallery="ww-gallery" data-toggle="lightbox">
+                                        <img alt="Gallery Pic 3" class="img-fluid" src="images/pic3.jpg" />
+                                    </a>
+                                </div>
+                                <div class="card" data-groups="[&quot;vacation&quot;]">
+                                    <a data-gallery="ww-gallery" data-toggle="lightbox">
+                                        <img alt="Gallery Pic 4" class="img-fluid" src="images/pic4.jpg" />
+                                    </a>
+                                </div>
+                                <div class="card"
+                                    data-groups="[&quot;wedding&quot;,&quot;ceremony&quot;,&quot;party&quot;]">
+                                    <a data-gallery="ww-gallery" data-toggle="lightbox">
+                                        <img alt="Gallery Pic 5" class="img-fluid" src="images/pic5.jpg" />
+                                    </a>
+                                </div>
+                                <div class="card" data-groups="[&quot;vacation&quot;]">
+                                    <a data-gallery="ww-gallery" data-toggle="lightbox">
+                                        <img alt="Gallery Pic 6" class="img-fluid" src="images/pic6.jpg" />
+                                    </a>
+                                </div>
+                                <div class="card" data-groups="[&quot;vacation&quot;]">
+                                    <a data-gallery="ww-gallery" data-toggle="lightbox">
+                                        <img alt="Gallery Pic 7" class="img-fluid" src="images/pic7.jpg" />
+                                    </a>
+                                </div>
+                                <div class="card" data-groups="[&quot;vacation&quot;]">
+                                    <a data-gallery="ww-gallery" data-toggle="lightbox">
+                                        <img alt="Gallery Pic 8" class="img-fluid" src="images/pic8.jpg" />
+                                    </a>
+                                </div>
+                                <div class="card" data-groups="[&quot;vacation&quot;]">
+                                    <a data-gallery="ww-gallery" data-toggle="lightbox">
+                                        <img alt="Gallery Pic 9" class="img-fluid" src="images/pic9.jpg" />
+                                    </a>
+                                </div>
+                                <div class="card" data-groups="[&quot;vacation&quot;]">
+                                    <a data-gallery="ww-gallery" data-toggle="lightbox">
+                                        <img alt="Gallery Pic 10" class="img-fluid" src="images/pic10.jpg" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="ww-section " id="account">
+                <div class="container">
+                    <div class="col text-center">
+                        <h2 class="h4 text-center pb-3">마음을 전하는곳</h2>
+                        <div class="dropdown-container">
+                            <input id="groom-dropdown" class="dropdown-input" type="checkbox"
+                                style="left: 0; visibility: hidden; position: absolute;" />
+                            <label class="dropdown-label" for="groom-dropdown">
+                                <div>신랑측 계좌번호</div>
+                                <i class="fa fa-angle-down caretIcon" aria-hidden="true"></i>
                             </label>
+                            <div class="dropdown-content">
+                                <ul>
+                                    <li id="groom-accounts">
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="my-3">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3174.3385168067725!2d127.03503141609774!3d37.28711014280288!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357b5ca6350de1df%3A0x26a46ff33d6ebd52!2z6rK96riw64-EIOyImOybkOyLnCDtjJTri6zqtawg7Jqw66eMMeuPmSDsm5Trk5zsu7XroZwgMzEw!5e0!3m2!1sko!2skr!4v1574407994283!5m2!1sko!2skr" width="100%" height="400" frameborder="0" style="border:0" allowfullscreen></iframe>
+                        <div class="dropdown-container" style="z-index: 9;">
+                            <input id="bride-dropdown" class="dropdown-input" type="checkbox"
+                                style="left: 0; visibility: hidden; position: absolute;" />
+                            <label class="dropdown-label" for="bride-dropdown">
+                                <div>신부측 계좌번호</div>
+                                <i class="fa fa-angle-down caretIcon" aria-hidden="true"></i>
+                            </label>
+                            <div class="dropdown-content">
+                                <ul>
+                                    <li id="bride-accounts">
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-
             </div>
+
         </div>
     </div>
-</div>
-</div>
-<footer></footer>
-<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script src="js/aos.js"></script>
-<script src="js/parallax.min.js"></script>
-<script src="js/ekko-lightbox.min.js"></script>
-<script src="scripts/main.js"></script>
 
-<div class="bottom_right"><i class="fa fa-arrow-up fa-2x" id="go-to-top"></i>
-</div>
+    </div>
+
+    <footer></footer>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="js/aos.js"></script>
+    <script src="js/parallax.min.js"></script>
+    <script src="js/ekko-lightbox.min.js"></script>
+    <script src="scripts/main.js"></script>
+
+    <div class="bottom_right"><i class="fa fa-arrow-up fa-2x" id="go-to-top"></i>
+    </div>
 
 </body>
+
 </html>
