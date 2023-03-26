@@ -10125,3 +10125,152 @@ body {
     width: 30%;
     text-align: center;
   }
+
+
+  @import url(//fonts.googleapis.com/earlyaccess/nanummyeongjo.css);
+  .nanummyeongjo * {
+      font-family: 'Nanum Myeongjo', serif;
+  }
+html {
+  background-color: #333;
+}
+body {
+  background-color: #f5f1ee;
+  font: 14px/32px Nanum Myeongjo;
+  height: 100%;
+  margin: auto;
+  max-width: 500px;
+  padding-bottom: 24px;
+  text-align: center;
+  width: 100%;
+  word-break: keep-all;
+}
+img {
+  height: auto;
+  width: 100%;
+}
+a {
+  text-decoration: none;
+}
+.title,
+.subtitle {
+  /* color: #0E5E6F; */
+}
+.title {
+  font-size: 20px;
+  padding: 40px 0 32px;
+}
+.subtitle {
+  font-size: 18px;
+  padding: 48px 0 16px;
+  font-weight: bold;
+}
+.accountnumber {
+  color: #0E5E6F;
+  font-size: 18px;
+  padding: 30px 0 10px;
+  text-align: center;
+}
+.bank-details {
+  color: #333;
+  font-size: 13px;
+  padding: 30px 0 10px;
+  text-align: center;
+}
+.bank-details-subject {
+  color: #333;
+  font-size: 16px;
+  padding: 30px 0 10px;
+  text-align: center;
+  font-weight: bold;
+}
+.bank-details-subject p {
+  color: #0E5E6F;
+  padding: 0px;
+}
+.banner,
+.entry {
+  background-color: #fff;
+  border: 8px solid #fff;
+  box-shadow: 1px 1px 3px rgb(0 0 0 / 7%);
+}
+.banner {
+  margin: 0 14px;
+}
+.banner-text,
+.family-members {
+  font-size: 16px;
+}
+.banner-text {
+  padding: 20px 0;
+}
+.greetings-text,
+.family-members {
+  margin: 16px 32px 0;
+}
+.greetings-text {
+  margin-bottom: 48px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 4px;
+  padding: 4px;
+}
+.grid a {
+  height: 200px;
+}
+.grid img {
+  height: 200px;
+  object-fit: cover;
+}
+.family-members .relation {
+  color: #8a857f;
+  font-size: 12px;
+}
+.button {
+  background-color: #0a4a51;
+  color: #fff;
+  cursor: pointer;
+  padding: 4px 20px;
+}
+.entry {
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 0 48px 16px;
+  position: relative;
+  text-align: left;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  line-height: 20px;
+  margin-bottom: 8px;
+}
+.name {
+  font-size: 15px;
+  text-align: left;
+}
+.date {
+  color: #aaa;
+  font-size: 11px;
+}
+.bank-details {
+  border: 1px solid rgb(193, 193, 193);
+  background-color:rgb(255, 255, 255);
+  padding: 5px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
+
+.bank-details h3 {
+  fill:rgb(255, 255, 255);
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.bank-details p {
+  fill:rgb(255, 255, 255);
+  font-size: 16px;
+  margin-bottom: 5px;
+}
