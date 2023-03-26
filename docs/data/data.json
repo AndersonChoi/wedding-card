@@ -28,13 +28,13 @@ couple=
       },
       {
         "holder_name": "이형표",
-        "bank_name": "OO은행",
-        "bank_account_number": "123123"
+        "bank_name": "농협",
+        "bank_account_number": "00312066828"
       },
       {
         "holder_name": "이광옥",
-        "bank_name": "OO은행",
-        "bank_account_number": "123123"
+        "bank_name": "우리은행",
+        "bank_account_number": "46208197663"
       }
     ]
   }
