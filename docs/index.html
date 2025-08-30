@@ -1391,7 +1391,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <script>
   Kakao.init('64c9ee23e4db51f2e977d6cb41ca67ea');  // 사용하려는 앱의 JavaScript 키 입력
+  Kakao.isInitialized();
 </script>
+
 
 <a id="kakaotalk-sharing-btn" href="javascript:;">
   <img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
@@ -1399,19 +1401,19 @@ window.addEventListener('DOMContentLoaded', () => {
 </a>
 
 <script>
-  Kakao.Share.createDefaultButton({
-    container: '#kakaotalk-sharing-btn',
-    objectType: 'feed',
-    content: {
-      title: '김창민 ♥ 김나연 결혼식에 초대합니다',
-      description: '2024년 10월 5일 토요일 오후 1시 30분\n호텔리츠컨벤션웨딩 7층 빌라 드 샬롯홀',
-      imageUrl: 'https://mylove-wedding.info/images/cover.jpg', // 이미지 URL 입력
-      link: {
-        mobileWebUrl: 'https://mylove-wedding.info',
-        webUrl: 'https://mylove-wedding.info'
-      }
+  Kakao.API.request({
+    url: '/v2/api/talk/memo/scrap/send',
+    data: {
+      request_url: 'https://developers.kakao.com',
+      template_id: 125832,
     },
   })
+    .then(function(response) {
+      console.log(response);
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
 </script>
   
 </body>
