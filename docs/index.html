@@ -14,7 +14,7 @@
     background:#d3bfbb;
     font-family:'Great Vibes', cursive;
   }
-  .load-text{ font-size:clamp(36px, 6vw, 64px); color:#e789df; white-space:pre-line; text-align:center; }
+  .load-text{ font-size:clamp(36px, 6vw, 64px); color:#ffb9c7; white-space:pre-line; text-align:center; }
   .char{ opacity:0; transition:opacity .5s; }
   .char.show{ opacity:1; }
 
@@ -321,12 +321,12 @@ img, iframe { max-width: 100%; height: auto; }
           <h2 class="h1 text-center pb-3 ww-title fade-in" style="font-size:1.3rem; font-weight:bold; font-family: 'Noto Serif KR', serif;"><span class="ico"><img src="images/icon/heart.png" alt="클로버" width="30" height="30" style="margin-top:-3px"></span> 우리의 결혼식에 초대합니다</h2>
           <h3 class="invite-sub fade-in" style= "margin-top:30px;">INVITATION</h3>
           <div class="invite-text fade-in">
-            푸른 하늘과 찬란한 여름날의 햇살 속에서<br>
-            아름다운 인연을 맺고자 합니다.<br><br>
-            저희 둘 아름다운 약속의 자리에<br>
-            귀한 분들의 걸음을 청합니다.<br>
-            하나 되는 두 사람의<br>
-            영원한 증인이 되어주세요.
+            오랜 인연이 깊은 사랑이 되어,<br>
+            이제 같은 길을 걸어가려 합니다.<br><br>
+            저희의 행복한 시작에 함께해 주신다면,<br>
+            더없이 기쁨이 될 것입니다.<br>
+            소중한 시간을 내어 축복해 주시면,<br>
+            진심으로 감사드리겠습니다.
           </div>
 
           <div class="invite-names fade-in">
@@ -364,7 +364,7 @@ img, iframe { max-width: 100%; height: auto; }
             <button class="contact-close" aria-label="닫기" data-close>✕</button>
 
             <div class="contact-group fade-in">
-              <h4 id="contactTitle" class="contact-head groom fade-in"><img src="images/icon/tel.png" alt="전화" width="20" height="20"> 신랑측</h4>
+              <h4 id="contactTitle" class="contact-head groom fade-in"><img src="images/icon/tel.png" alt="전화" width="20" height="20" style="margin-top:-5px"> 신랑측</h4>
               <hr>
               <div class="contact-row fade-in">
                 <div class="who fade-in"><span class="role">신랑</span> <b>김창민</b></div>
@@ -383,7 +383,7 @@ img, iframe { max-width: 100%; height: auto; }
             </div>
 
             <div class="contact-group fade-in">
-              <h4 class="contact-head bride fade-in"><img src="images/icon/tel.png" alt="전화" width="20" height="20"> 신부측</h4>
+              <h4 class="contact-head bride fade-in"><img src="images/icon/tel.png" alt="전화" width="20" height="20" style="margin-top:-5px"> 신부측</h4>
               <hr class="sep">
               <div class="contact-row fade-in">
                 <div class="who fade-in"><span class="role">신부</span> <b>김나연</b></div>
@@ -406,7 +406,7 @@ img, iframe { max-width: 100%; height: auto; }
         <style>
         /* 레이아웃/타이포 */
         .invite{ text-align:center; padding:40px 16px; background-color: #ffffff;}
-        .invite-sub{ letter-spacing:.3em; color:#f58a77; margin-bottom:24px; font-weight:600; font-size:1em }
+        .invite-sub{ letter-spacing:.3em; color:#ffb9c7; margin-bottom:24px; font-weight:600; font-size:1em }
         .invite-text{ color:#444; line-height:2; margin:0 auto 28px; max-width:560px; }
         .invite-names{ color:#2c2c2c; line-height:2.4; margin:28px 0 22px; }
         .invite-btn{
@@ -415,7 +415,7 @@ img, iframe { max-width: 100%; height: auto; }
           padding:14px 18px; border-radius:12px; cursor:pointer;
           box-shadow:0 4px 14px rgba(0,0,0,.06);
         }
-        .invite-btn:hover{ color: #f8fff8;
+        .invite-btn:hover{ color:  #808074;
           text-decoration: underline;
           background-color: transparent;
           border-color: transparent;}
@@ -497,10 +497,10 @@ img, iframe { max-width: 100%; height: auto; }
         <section class="calendar-wrap fade-in">
           <div class="cal-top fade-in">
             <div class="cal-kicker fade-in">WEDDING DAY</div>
-            <div class="cal-date fade-in" style="font-family: 'Noto Serif KR'; font-weight:bold; margin-top:10px;">2025.09.20. 토요일 오후 2:00</div>
+            <div class="cal-date fade-in" style="font-family: 'Noto Serif KR'; font-weight:bold; margin-top:10px; text-">2025.09.20. 토요일 오후 2:00</div>
             <h6 style="font-family: 'Noto Serif KR', serif; text-align:center; margin-top:10px;">
               <!-- ...existing code... -->
-              <span class="fade-in" id="countdown" style="font-weight:bold; color:#b48e5c;"></span>
+              <span class="fade-in" id="countdown" style="font-weight:bold; color:#868273; font-size: 0.8em;;"></span>
               <script>
               // 2025년 9월 20일 14시를 목표로 카운트다운
               function updateCountdown() {
@@ -688,8 +688,8 @@ img, iframe { max-width: 100%; height: auto; }
             <article class="gift-card groom fade-in">
             <button class="gift-head fade-in" aria-expanded="false">
                 <span class="head-left fade-in">
-                <img src="images/icon/leaf.png" alt="나뭇잎" width=14 height=14>
-                <span class="head-title fade-in">신랑측</span>
+                  <img src="images/icon/leaf.png" alt="나뭇잎" width=14 height=14>
+                  <span class="head-title fade-in">신랑측</span>
                 </span>
                 <span class="chev fade-in"></span>
             </button>
@@ -712,7 +712,7 @@ img, iframe { max-width: 100%; height: auto; }
 
                 <div class="gift-row fade-in">
                 <div class="gift-info fade-in">
-                    <div class="who fade-in">혼주 <b>김순화</b></div>
+                    <div class="who fade-in"><b>혼주 김순화</b></div>
                     <div class="bank fade-in">우리은행 <span class="acct">477-08-018573</span></div>
                 </div>
                 <div class="gift-actions fade-in">
@@ -739,6 +739,8 @@ img, iframe { max-width: 100%; height: auto; }
                 <div class="gift-row fade-in">
                 <div class="gift-info fade-in">
                     <div class="who fade-in"><b>신부 김나연</b></div>
+                    <a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej7ps3prE" target="_blank" rel="noopener"><img src="images/icon/chat.png" alt="카카오" width=14 height=14 style="margin-top:-3px">
+                      카카오페이 송금</a>
                     <div class="bank fade-in">카카오뱅크 <span class="acct fade-in">3333-03-8624607</span></div>
                 </div>
                 <div class="gift-actions fade-in">
@@ -751,7 +753,7 @@ img, iframe { max-width: 100%; height: auto; }
 
                 <div class="gift-row fade-in">
                 <div class="gift-info fade-in">
-                    <div class="who fade-in">혼주 <b>박남희</b></div>
+                    <div class="who fade-in"><b>혼주 박남희</b></div>
                     <div class="bank fade-in">신한은행 <span class="acct fade-in">110-234-567890</span></div>
                 </div>
                 <div class="gift-actions fade-in">
@@ -782,8 +784,8 @@ img, iframe { max-width: 100%; height: auto; }
         .gift-title{font-family:'Noto Serif KR',serif; text-align:center; margin:0 0 10px}
         .gift-desc{color:var(--sub); text-align:center; margin:0 0 28px; line-height:1.7}
 
-        .gift-grid{display:flex; gap:24px; max-width:1000px; margin:0 auto; flex-wrap:wrap; align-items:flex-start}
-        .gift-card{flex:1 1 420px; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fff; box-shadow:0 6px 16px rgba(0,0,0,.04)}
+        .gift-grid{gap:24px; max-width:1000px; margin:0 auto; flex-wrap:wrap; align-items:flex-start}
+        .gift-card{align-items:center; flex:400px; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fff; box-shadow:0 6px 16px rgba(0,0,0,.04)}
 
         .gift-head{width:100%; display:flex; justify-content:space-between; align-items:center; gap:8px;
         padding:14px 16px; border:none; cursor:pointer; background:var(--sage); color:var(--sage-ink); font-weight:700}
@@ -800,8 +802,8 @@ img, iframe { max-width: 100%; height: auto; }
         .gift-row{display:flex; justify-content:space-between; gap:16px; padding:16px}
         .divider{height:1px; background:var(--line)}
         .gift-info{min-width:0}
-        .who{color:var(--ink); margin-bottom:4px}
-        .bank{color:var(--sub)}
+        .who{color:var(--ink); margin-bottom:4px;;}
+        .bank{color:var(--sub); font-family: 'noto serif kr', serif}
         .acct{font-weight:700; color:var(--ink)}
 
         .gift-actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
@@ -856,38 +858,39 @@ img, iframe { max-width: 100%; height: auto; }
                 <div class="container fade-in">
                   <hr class="green-divider">
                     <div class="col text-center fade-in">
-                        <h2 class="h1 text-center pb-3 ww-title fade-in" style="font-size:1.5rem; font-weight:bold; font-family: 'Noto Serif KR', serif;"><span class="ico"><img src="images/icon/heart.png" alt="클로버" width="30" height="30" style="margin-top:-3px"></span> 축하 메시지</h2><br>
+                        <!--h2 class="h1 text-center pb-3 ww-title fade-in" style="font-size:1.5rem; font-weight:bold; font-family: 'Noto Serif KR', serif;"><span class="ico"><img src="images/icon/heart.png" alt="클로버" width="30" height="30" style="margin-top:-3px"></span> 축하 메시지</h2><br-->
                         <!--div id="comments"></div-->
-                        <br>
+                        <!--br>
                         <div class="row fade-in">
                             <div class="col text-center fade-in">
-                                <!-- a class="btn btn-primary btn-submit" href="./guestbook.html"-->
+                                <a class="btn btn-primary btn-submit" href="./guestbook.html"-->
 <!-- 토글 버튼 -->
-<button id="toggleGuestbook" class="btn btn-primary fade-in">메시지 보내기 버튼</button>
+<!--button id="toggleGuestbook" class="btn btn-primary fade-in">메시지 보내기 버튼</button>
 <style>
 #toggleGuestbook {
   display: none;
 }
 </style>
-<!-- 방명록 섹션 (메인에 인라인) -->
+< 방명록 섹션 (메인에 인라인) >
 <section id="guestbookSection" style="display:none; margin-top:16px;">
-  <!-- 입력 폼 -->
-  <form id="guestbookForm" style="padding:12px 18px; display:grid; grid-template-columns:1fr auto; gap:10px; align-items:start; border:1px solid #eee; border-radius:12px;">
-    <input id="gbName" name="name" required="" placeholder="이름" style="padding:10px; border:1px solid #ddd; border-radius:8px;">
-    <button class="btn fade-in" style="padding:10px 14px; border-radius:10px; border:1px solid #ddd; background:#f6f6f6;">등록</button>
+  < 입력 폼 >
+  <form id="guestbookForm" style="padding:12px 18px; display:grid; grid-template-columns:1fr auto; gap:10px; align-items:start; border:1px solid #ffdbfc; border-radius:12px;">
+    <input id="gbName" name="name" required="" placeholder="이름" style="padding:10px; border:1px solid #ffffff; border-radius:8px;">
+    <button class="btn fade-in" style="padding:10px 14px; border-radius:10px; border:1px solid #ffdbfc; background:#ffdbfc;">등록</button>
 
     <textarea id="gbMsg" name="message" required="" placeholder="메시지를 입력하세요" rows="3" style="grid-column:1 / -1; padding:10px; border:1px solid #ddd; border-radius:8px;"></textarea>
 
-    <!-- 비밀번호(삭제에 사용) -->
+    < 비밀번호(삭제에 사용) >
     <input id="gbPwd" name="password" type="password" required="" placeholder="비밀번호(삭제 시 필요)" style="grid-column:1 / -1; padding:10px; border:1px solid #ddd; border-radius:8px;">
 
-    <!-- 허니팟(봇차단, 숨김) -->
+    < 허니팟(봇차단, 숨김) >
     <input type="text" name="phone" tabindex="-1" autocomplete="off" style="position:absolute; left:-9999px; width:1px; height:1px;">
   </form>
 
-  <!-- 목록 -->
+  < 목록 >
+  <div class="gb--divider" aria-hidden="true"></div>
   <div id="guestbookList" style="padding:16px 0;"></div>
-</section>
+</section-->
 <style>
   /* 전체 폰트 & 색상 */
   /* 전역 body는 건드리지 말고, 방명록 섹션만 */
@@ -950,12 +953,11 @@ background:
 
 /* 포스트잇 카드 스타일 */
 .gb--card {
-  background: #fff9c4; /* 파스텔 노랑 */
-  border: 1px solid #f0e68c;
+  background: #ffffff; /* 파스텔 노랑 */
+  border: 1px solid #ffffff;
   border-radius: 6px;
   padding: 14px 16px;
   box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
-  transform: rotate(-1.5deg);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   min-height: 140px;
 }
@@ -996,19 +998,7 @@ background:
   }
 </style>
 
-<!-- 공유/복사 영역 -->
-<div class="share-section fade-in">
-  <!-- 카카오톡 공유 -->
-  <a href="https://sharer.kakao.com/talk/friends/picker/link?url=https://mylove-wedding.info" target="_blank" class="share-btn kakao fade-in">
-    <span class="icon fade-in">💬</span>
-    카카오톡 공유하기
-  </a>
-  <!-- 링크 복사 -->
-  <button class="share-btn copy fade-in" data-link="https://mylove-wedding.info">
-    <span class="icon fade-in">🔗</span>
-    링크 복사하기
-  </button>
-</div>
+
 
 <style>
 .share-section {
@@ -1288,8 +1278,8 @@ window.addEventListener('DOMContentLoaded', () => {
   // (B) 로딩 글자 애니 후: 게이트 해제 → 옵저버 시작 → 오버레이 제거
   (function(){
     const MESSAGE = "Happy\nWedding\nDay";
-    const STEP_MS = 180; <!--180, 800-->
-    const EXTRA_WAIT_MS = 800;
+    const STEP_MS = 0; <!--180, 800-->
+    const EXTRA_WAIT_MS = 0;
 
     const overlay = document.getElementById('loadingOverlay');
     const textBox = document.getElementById('loadingText');
@@ -1383,6 +1373,38 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- 공유/복사 영역 -->
+<div class="share-section fade-in">
+  <!-- 카카오톡 공유 -->
+  <a id= 'kakao-share-btn' href="javascript:;" class="share-btn kakao fade-in">
+    <span class="icon fade-in"><img src="images/icon/chat.png" alt="카카오" width=14 height=14 style="margin-top:-3px"></span>
+    카카오톡 공유하기
+  </a>
+  <!-- 링크 복사 -->
+  <button class="share-btn copy fade-in" data-link="https://mylove-wedding.info">
+    <span class="icon fade-in">🔗</span>
+    링크 복사하기
+  </button>
+</div>
+
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.7/kakao.min.js" integrity="sha384-tJkjbtDbvoxO+diRuDtwRO9JXR7pjWnfjfRn5ePUpl7e7RJCxKCwwnfqUAdXh53p" crossorigin="anonymous"></script>
+
+<script>
+  // 카카오 SDK 초기화
+  Kakao.init('64c9ee23e4db51f2e977d6cb41ca67ea')
+
+  // 카카오 공유 버튼
+  KaKao.Link.createCustomButton({
+    container: '#kakao-share-btn',
+    templateId: 12345, // 카카오 디벨로퍼스에서 만든 템플릿 ID
+    templateArgs: {
+      title: '우리 결혼해요!',
+      description: '김창민 & 김나연의 웨딩 페이지에 오신 것을 환영합니다.',
+      }
+    });
+  </script>
+
 </body>
+
 
 </html>

@@ -176,7 +176,7 @@ a {
 }
 
 a:hover {
-    color: #f04d30;
+    color: #808074;
     text-decoration: underline;
 }
 
@@ -10134,8 +10134,8 @@ body {
 
   /* 상단 텍스트 */
   .calendar-wrap{max-width:520px;margin:0 auto;padding:8px 16px 24px; background-color: #ffffff;;}
-  .cal-kicker{letter-spacing:.25em;color:#f58a77;font-weight:700;text-align:center;margin-bottom:8px}
-  .cal-date{letter-spacing:.15em;font-size:22px;text-align:center;margin-bottom:8px;color:#2b2b2b}
+  .cal-kicker{letter-spacing:.25em;color:#ffb9c7;font-weight:700;text-align:center;margin-bottom:8px}
+  .cal-date{letter-spacing:0em;font-size:22px;text-align:center;margin-bottom:8px;color:#2b2b2b}
   
   /* 달력 그리드 */
   .cal{
@@ -10143,7 +10143,7 @@ body {
     padding:14px 12px; margin:8px 0 20px;
     display:grid; grid-template-columns: repeat(7,1fr); gap:10px 6px;
     align-items:center; justify-items:center;
-    font-family: inherit; background-color: #ffffff;
+    font-family: 'noto serif kr',serif; background-color: #ffffff;
   }
   .cal .dow{font-weight:700;color:#999}
   .cal .dow.su{color:#d9534f}
@@ -10151,7 +10151,7 @@ body {
   .cal .day.su{color:#d9534f}
   .cal .day.muted{opacity:.35}
   .cal .day.dday{
-    background:#f58a77; color:#fff; font-weight:700;
+    background:#ffb9c7; color:#fff; font-weight:700;
     box-shadow:0 2px 6px rgba(0,0,0,.15);
   }
   
@@ -10192,7 +10192,7 @@ body {
 
   .green-divider {
     border: none;
-    border-top: 2px solid #f58a77;
+    border-top: 2px solid #ffb9c7;
     width: 80%;
     margin: 30px auto;
     position: relative;
@@ -10206,7 +10206,33 @@ body {
     background: #ffffff; /* 배경색 맞춰서 */
     padding: 0 12px;
     font-size: 18px;
-    color: #f58a77;
+    color: #ffb9c7;
   }
 
+  /* 카드 상단 라인 + 잎사귀 디바이더 */
+.gb--divider{
+    margin:10px 0 8px;
+    height:18px;
+    background:
+      radial-gradient(circle at 10% 50%, rgba(180,142,92,.35) 2px, transparent 3px) 0 9px/16px 2px repeat-x,
+      radial-gradient(circle at 90% 50%, rgba(180,142,92,.35) 2px, transparent 3px) 0 9px/16px 2px repeat-x;
+    opacity:.6;
+  }
   
+  /* 텍스트 */
+  .gb--card strong{
+    display:block; font-weight:700; color:var(--muted);
+    letter-spacing:.02em; margin-bottom:4px; font-size:15px;
+  }
+  .gb--card div{ white-space:pre-wrap; line-height:1.75; font-size:14.5px; }
+  .gb--meta{
+    margin-top:10px; display:flex; justify-content:space-between; align-items:center;
+    color:#7a6f62; font-size:12.5px;
+  }
+  
+  /* 삭제 버튼: 아이콘형 */
+  .gb-del{
+    background:transparent; border:none; cursor:pointer; padding:4px 6px;
+    border-radius:8px; color:#9a8f82; transition: background .2s, color .2s;
+  }
+  .gb-del:hover{ background:#fff3ee; color:#c35b4e; }
