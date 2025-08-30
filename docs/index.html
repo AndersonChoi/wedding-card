@@ -1390,7 +1390,7 @@ window.addEventListener('DOMContentLoaded', () => {
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.7/kakao.min.js" integrity="sha384-tJkjbtDbvoxO+diRuDtwRO9JXR7pjWnfjfRn5ePUpl7e7RJCxKCwwnfqUAdXh53p" crossorigin="anonymous"></script>
 
 <script>
-  Kakao.init('64c9ee23e4db51f2e977d6cb41ca67ea');  // 사용하려는 앱의 JavaScript 키 입력
+  Kakao.init('64c9ee23e4db51f2e977d6cb41ca67ea ');  // 사용하려는 앱의 JavaScript 키 입력
   Kakao.isInitialized();
 </script>
 
@@ -1400,22 +1400,24 @@ window.addEventListener('DOMContentLoaded', () => {
     alt="카카오톡 공유 보내기 버튼" />
 </a>
 
-<script>
-  Kakao.API.request({
-    url: '/v2/api/talk/memo/scrap/send',
-    data: {
-      request_url: 'https://developers.kakao.com',
-      template_id: 125832,
-    },
-  })
-    .then(function(response) {
-      console.log(response);
-    })
-    .catch(function(error) {
-      console.log(error);
-    });
+<div id="btnKakao">
+  <img src="/img/sns_kakao.png" id="kakao-link-btn" alt="카카오톡 링크 공유하기">
+</div>
+
+
+<script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
+<script type='text/javascript'>
+  //<![CDATA[
+  // // 사용할 앱의 JavaScript 키를 설정해 주세요.
+  Kakao.init('64c9ee23e4db51f2e977d6cb41ca67ea');
+  // // 카카오링크 버튼을 생성합니다. 처음 한번만 호출하면 됩니다.
+  Kakao.Link.createScrapButton({
+      container: '#kakao-link-btn',
+      requestUrl: 'URL 주소 입력',
+      templateId : 123852 
+  });
+  //]]>
 </script>
-  
 </body>
 
 
