@@ -405,7 +405,6 @@ img, iframe { max-width: 100%; height: auto; }
             </div>
           </div>
         </div>
-
         <style>
         /* 레이아웃/타이포 */
         .invite{ text-align:center; padding:40px 16px; background-color: #ffffff;}
@@ -705,9 +704,9 @@ img, iframe { max-width: 100%; height: auto; }
                     <div class="bank fade-in" style="transition-delay: 240ms; left: -16px; top: -44px;">토스뱅크 <span class="acct">1000-2198-4655</span></div>
                 </div>
                 <div class="gift-actions fade-in">
-                    <a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej7ps3prE" target="_blank" rel="noopener"><img src="images/icon/chat.png" alt="카카오" width=14 height=14 style="margin-top:-3px">
+                    <a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej7ps3prE" target="_blank" rel="noopener" style="font-size:0.8em"><img src="images/icon/chat.png" alt="카카오" width=10 height=10 style="margin-top:-3px">
                       카카오페이 송금</a>
-                    <button class="btn ghost fade-in" data-copy="1000-2198-4655">계좌번호 복사</button>
+                    <button class="btn ghost fade-in" data-copy="1000-2198-4655" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 계좌번호 복사</button>
                 </div>
                 </div>
 
@@ -720,7 +719,7 @@ img, iframe { max-width: 100%; height: auto; }
                 </div>
                 <div class="gift-actions fade-in">
                     <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej7ps3prE" target="_blank" rel="noopener">카카오페이 송금</a-->
-                    <button class="btn ghost fade-in" data-copy="477-08-018573">계좌번호 복사</button>
+                    <button class="btn ghost fade-in" data-copy="477-08-018573" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 계좌번호 복사</button>
                 </div>
                 </div>
             </div>
@@ -740,16 +739,15 @@ img, iframe { max-width: 100%; height: auto; }
 
             <div class="gift-body fade-in">
                 <div class="gift-row fade-in">
-                <div class="gift-info fade-in">
-                    <div class="who fade-in"><b>신부 김나연</b></div>
-                    <a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej7ps3prE" target="_blank" rel="noopener"><img src="images/icon/chat.png" alt="카카오" width=14 height=14 style="margin-top:-3px">
-                      카카오페이 송금</a>
-                    <div class="bank fade-in">카카오뱅크 <span class="acct fade-in">3333-03-8624607</span></div>
-                </div>
-                <div class="gift-actions fade-in">
-                    
-                    <button class="btn ghost fade-in" data-copy="3333-03-8624607">계좌번호 복사</button>
-                </div>
+                  <div class="gift-info fade-in">
+                      <div class="who fade-in"><b>신부 김나연</b></div>
+                      <div class="bank fade-in" style="transition-delay: 240ms; left: -16px; top: -44px;">카카오뱅크 <span class="acct">3333-03-8624607</span></div>
+                  </div>
+                  <div class="gift-actions fade-in">
+                      <a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej8tLCSV3" target="_blank" rel="noopener" style="font-size:0.8em"><img src="images/icon/chat.png" alt="카카오" width=10 height=10 style="margin-top:-3px">
+                        카카오페이 송금</a>
+                        <button class="btn ghost fade-in" data-copy="3333-03-8624607" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 계좌번호 복사</button>
+                  </div>
                 </div>
 
                 <div class="divider fade-in"></div>
@@ -760,8 +758,8 @@ img, iframe { max-width: 100%; height: auto; }
                     <div class="bank fade-in">신한은행 <span class="acct fade-in">110-234-567890</span></div>
                 </div>
                 <div class="gift-actions fade-in">
-                    <a class="btn pay fade-in" href="https://qr.kakaopay.com/예시" target="_blank" rel="noopener">카카오페이 송금</a>
-                    <button class="btn ghost fade-in" data-copy="3333-03-8624607">계좌번호 복사</button>
+                    <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/예시" target="_blank" rel="noopener">카카오페이 송금</a-->
+                    <button class="btn ghost fade-in" data-copy="3333-03-8624607" style="font-size:0.8em"> <img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 계좌번호 복사</button>
                 </div>
                 </div>
             </div>
@@ -802,15 +800,29 @@ img, iframe { max-width: 100%; height: auto; }
         .gift-head[aria-expanded="true"] .chev{ transform:rotate(-135deg) }
 
         .gift-body{display:none; padding:0}
-        .gift-row{display:flex; justify-content:space-between; gap:16px; padding:16px}
+        .gift-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start; /* 👈 추가 */
+          gap: 16px;
+          padding: 16px;
+        }
         .divider{height:1px; background:var(--line)}
         .gift-info{min-width:0}
-        .who{color:var(--ink); margin-bottom:4px;;}
-        .bank{color:var(--sub); font-family: 'noto serif kr', serif}
+        .who {
+          color: var(--ink);
+          margin-bottom: 4px;
+          text-align: left; /* 👈 추가 */
+        }
+        .bank{color:var(--sub); font-family: 'noto serif kr', serif; font-size:0.8em;}
         .acct{font-weight:700; color:var(--ink)}
 
-        .gift-actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-        .btn{border:none; border-radius:999px; padding:10px 16px; font-weight:700; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.06)}
+        .gift-actions {
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          align-items: center; /* 또는 flex-start */
+        }        .btn{border:none; border-radius:999px; padding:10px 16px; font-weight:700; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.06)}
         .btn.pay{background:var(--pay)}
         .btn.ghost{background:#fff; border:1px solid var(--line)}
         .btn:hover{filter:brightness(.98)}
@@ -854,13 +866,13 @@ img, iframe { max-width: 100%; height: auto; }
         });
         </script>
 
+        <!--h3 class="invite-sub fade-in" style= "margin-top:30px; text-align:center; letter-spacing:0em">Thank you</h3-->
+        <hr class="green-divider">
 
-
-        <div class="ww-section bg-light fade-in" id="comment">
+        <!--div class="ww-section bg-light fade-in" id="comment">
             <div class="ww-photo-gallery fade-in">
                 <div class="container fade-in">
-                  <hr class="green-divider">
-                    <div class="col text-center fade-in">
+                    <div class="col text-center fade-in"-->
                         <!--h2 class="h1 text-center pb-3 ww-title fade-in" style="font-size:1.5rem; font-weight:bold; font-family: 'Noto Serif KR', serif;"><span class="ico"><img src="images/icon/heart.png" alt="클로버" width="30" height="30" style="margin-top:-3px"></span> 축하 메시지</h2><br-->
                         <!--div id="comments"></div-->
                         <!--br>
