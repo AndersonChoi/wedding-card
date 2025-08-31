@@ -1,56 +1,585 @@
-<script>
-(function(){
-  const modal   = document.getElementById('contactModal');
-  const openBtn = document.getElementById('openContact');
+<!DOCTYPE html>
+<html lang="en-US" data-loading="1">
 
-  let scrollY = 0;
-  function lockScroll(){
-    // 현재 스크롤 보존 후 fixed로 고정 (iOS 안전)
-    scrollY = window.scrollY || window.pageYOffset || 0;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    document.body.style.width = '100%';
-  }
-  function unlockScroll(){
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    document.body.style.width = '';
-    window.scrollTo(0, scrollY);
-  }
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Preload: 폰트 먼저 가져오기 (모바일 웹뷰 안정화) -->
 
-  function open(){
-    // 아이폰에서 모달이 화면 위로 확실히 보이도록 먼저 스크롤 올림
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    lockScroll();
-    modal.setAttribute('aria-hidden', 'false');
-    setTimeout(()=>modal.querySelector('.contact-close').focus(), 0);
-  }
+  <meta property="og:title" content="청담 플래그십 스토어 오픈">
+  <meta property="og:image" content="https://example.com/intro.jpg">
+  <meta property="og:description" content="패션 브랜드 'SAM APPAREL'가 ...">
 
-  function close(){
-    modal.setAttribute('aria-hidden', 'true');
-    unlockScroll();
+  <style>
+  /* 전체를 덮는 로딩 오버레이 */
+  #loadingOverlay{
+    position:fixed; inset:0; z-index:99999;
+    display:flex; align-items:center; justify-content:center;
+    background:#d3bfbb;
+    font-family:'Great Vibes', cursive;
+  }
+  .load-text{ font-size:clamp(36px, 6vw, 64px); color:#ffb9c7; white-space:pre-line; text-align:center; }
+  .char{ opacity:0; transition:opacity .5s; }
+  .char.show{ opacity:1; }
+
+  /* 본문은 처음엔 숨김 */
+  #pageContent{ visibility:hidden; }
+
+
+  /* 로딩 중 스크롤 잠금 */
+  body.no-scroll {
+    overflow: hidden;
+    height: 100vh;
   }
 
-  openBtn.addEventListener('click', e=>{
-    e.preventDefault();
-    open();
-  });
+  /* 본문은 처음에 보이지 않게 + 페이드인 준비 */
+  #pageContent {
+    opacity: 0;
+    visibility: hidden;          /* 레이아웃은 유지, 화면엔 안 보이게 */
+    transform: translateY(8px);   /* 살짝 아래서 올라오도록 */
+    transition: opacity .6s ease, transform .6s ease, visibility 0s linear .6s;
+    /* visibility는 .show가 되기 전까지 숨김 유지, .6s 뒤 보이도록 딜레이 */
+    will-change: opacity, transform;
+  }
+  /* 로딩 끝난 뒤 클래스 추가되면 등장 */
+  #pageContent.show {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity .6s ease, transform .6s ease, visibility 0s; /* 즉시 보이기 */
+  }
 
-  // 배경(투명) 클릭 시 닫기
-  modal.addEventListener('click', e=>{
-    if (e.target.hasAttribute('data-close')) close();
-  });
+  /* 모션 최소화 설정을 존중 */
+  @media (prefers-reduced-motion: reduce) {
+    #pageContent { transition: none; transform: none; }
+  }
 
-  document.addEventListener('keydown', e=>{
-    if (modal.getAttribute('aria-hidden') === 'false' && e.key === 'Escape') close();
-  });
-})();
-</script>
+  /* 로딩 오버레이가 확실히 덮도록 */
+  #loadingOverlay {
+    position: fixed; inset: 0; z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    background: rgb(255, 255, 255);
+  }
 
+  body {
+    font-family: 'Noto Serif KR', 'Apple SD Gothic Neo', 'Malgun Gothic', serif;
+  }
+  
+</style>
+  
+<style>
+  @media (max-width: 480px){
+  #guestbookForm{ grid-template-columns: 1fr; }
+  }
+  /* 한 번만 선언해두면 잔여 1~2px 넘침 방지에 좋아요 */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
+
+/* 폼의 1열을 '줄어들 수 있는' 열로 */
+#guestbookForm{
+  grid-template-columns: minmax(0,1fr) auto;
+  max-width: 100%;
+  }
+
+  #guestbookList{
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    max-width: 100%;
+  }
+
+/* 그리드 자식이 줄어들도록 강제 (KaKao WebView 중요) */
+#guestbookForm > * { min-width: 0; }
+#guestbookForm input,
+#guestbookForm textarea,
+#guestbookForm button { max-width: 100%; }
+
+</style>
+
+<style>
+  /* 공통 페이드인 */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 1.7s ease, transform 1.7s ease;
+    will-change: opacity, transform;
+  }
+  .fade-in.show {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>창민과 나연의 결혼식에 초대합니다</title>
+    <meta content="김창민과 김나연의 결혼식에 와서 축하해주세요~!" name="description"/>
+    <meta property="og:image" content="images/main-background.jpeg">
+    <meta property="fb:app_id" content="781066922265598" />
+    <meta property="fb:admins" content="cmkkkk"/>
+    <link href="images/favicon/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
+    <link href="images/favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+    <link href="images/favicon/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+    <link href="https://fonts.googleapis.com/css?family=Dosis:400,500" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Great+Vibes" rel="stylesheet">
+    <link href="css/ekko-lightbox.css" rel="stylesheet">
+    <link href="styles/main.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Gamja+Flower|Gugi|Noto+Serif+KR|Stylish|Sunflower:300"
+          rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-2.2.1.js"></script>
+
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        function findGetParameter(parameterName) {
+            var result = null,
+                tmp = [];
+            location.search
+                .substr(1)
+                .split("&")
+                .forEach(function (item) {
+                  tmp = item.split("=");
+                  if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+                });
+            return result;
+        }
+
+        $(document).ready(function () {
+
+            function getText(){
+                var result = null;
+                $.ajax( { url: "https://raw.githubusercontent.com/AndersonChoi/wedding-card/master/README.md",
+                        type: 'get',
+                        dataType: 'html',
+                        async: false,
+                        success: function(data) { result = data; }
+                    }
+                );
+                FileReady = true;
+                return result;
+            }
+            var markdown_source = getText();
+            var comment_contents = markdown_source.split("축하의 말")[1];
+
+            var md = new Remarkable();
+            $("#comments").append(md.render(comment_contents));
+
+            
+            if(findGetParameter('gift')=='false'){
+                $('#gifts').hide();
+            }
+        });
+
+
+
+
+    </script>
+
+<style>
+  /* 로딩 중: 스크롤/상호작용 차단 + 본문/페이드 요소 완전 숨김 */
+  html[data-loading="1"] body { overflow: hidden; height: 100vh; overscroll-behavior: none; }
+  html[data-loading="1"] #pageContent {
+    opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(8px);
+  }
+  html[data-loading="1"] .fade-in { opacity: 0 !important; transform: translateY(8px) !important; }
+  #loadingOverlay { pointer-events: all; touch-action: none; } /* 오버레이가 이벤트 먹도록 */
+
+  /* 로딩 해제 후: 자연스런 페이드인 */
+  html:not([data-loading="1"]) #pageContent {
+    opacity: 1; visibility: visible; transform: none;
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  html:not([data-loading="1"]) .fade-in.show {
+    opacity: 1; transform: none;
+  }
+
+  :root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* iOS 주소창 높이 문제 대응 */
+#loadingOverlay{
+  height: 100vh;
+  padding-top: calc(12px + var(--safe-top));
+  padding-bottom: calc(12px + var(--safe-bottom));
+}
+@supports (height: 100dvh){
+  #loadingOverlay{ height: 100dvh; }
+}
+
+/* 로딩 중 아이폰 바운스/튕김 방지 */
+html[data-loading="1"] body{
+  position: fixed; inset: 0; width: 100%;
+  overscroll-behavior: none;
+}
+
+/* 음악 컨트롤이 노치/상단바에 가리지 않도록 */
+.music-top{
+  top: calc(12px + var(--safe-top));
+}
+
+/* 터치 하이라이트/텍스트 드래그 최소화 */
+a, button { -webkit-tap-highlight-color: rgba(0,0,0,.08); }
+* { -webkit-touch-callout: none; }
+
+/* 이미지/아이프레임 반응형 보장 */
+img, iframe { max-width: 100%; height: auto; }
+
+/* 480px 이하(휴대폰) 최적화 */
+@media (max-width: 480px){
+  .ww-couple-name { font-size: 2.2em !important; }
+  .music-top{ gap: 8px; padding: 6px 10px; }
+  .volume-slider{ width: 60px; } /* 기본 30px → 모바일에서 조금 넉넉히 */
+  .gift-grid{ gap: 16px; }
+  .gift-card{ flex-basis: 100%; }
+  .map-icon{ width: 52px; height: auto; } /* 터치 타겟 유지 */
+}
+
+/* 360px 이하(아주 작은 기기) */
+@media (max-width: 360px){
+  .volume-slider{ width: 48px; }
+  .music-btn{ width: 32px; height: 32px; font-size: 12px; }
+}
+
+.ww-wedding-announcement {
+  position: relative; /* 기준 부모 */
+}
+
+.hero-sub {
+  position: absolute;
+  top: 10%; /* 사진 상단에서 5% (원하면 3%~10%로 조절) */
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-block;   /* 문구 길이만큼만 박스 차지 */
+  text-align: center;
+  color: #fff;
+  margin: 0;
+  z-index: 3;
+  white-space: nowrap;
+}
+
+.ww-announcement-container {
+  margin-top: 10em;   /* 글자 크기 기준 3줄 정도 아래로 */
+}
+
+
+</style>
+
+
+</head>
+
+<body id="top" class="no-scroll">
+
+<!-- 로딩 오버레이 -->
+<div id="loadingOverlay" aria-label="Loading">
+  <div class="load-text" id="loadingText"></div>
+</div>
+
+<!-- 본문 래퍼: 기존 index.html의 모든 본문을 이 안에 넣기 -->
+<div id="pageContent">
+
+<header></header>
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/ko_KR/sdk.js#xfbml=1&version=v3.2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+<div class="page-content">
+    <div class="div" style="background-color: #ffffff;">
+        <div class="ww-home-page ww-title" id="home">
+        </div>
+        <div class="ww-nav-bar fixed-top bg-light">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container">
+                    <!-- 항상 보이는 사운드 컨트롤 (데스크톱 + 모바일 동일) -->
+                  <div class="navbar-sound d-flex align-items-center ms-auto">
+                      <button id="playPause" class="sound-btn" aria-label="재생/일시정지">
+                        <img src="images/icon/speaker.png" alt="재생" width="22" height="22">
+                      </button>
+                  </div>
+                    <button class="navbar-toggler" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#ww-navbarNav"
+                            aria-controls="ww-navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse text-uppercase" id="ww-navbarNav">
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item"><a class="nav-link smooth-scroll" href="#invite">소개</a></li>
+                            <li class="nav-item"><a class="nav-link smooth-scroll" href="#gallery">사진</a></li>
+                            <li class="nav-item"><a class="nav-link smooth-scroll" href="#map">오시는 길</a></li>
+                            <li class="nav-item"><a class="nav-link smooth-scroll" href="#account">계좌번호</a></li>
+                        </ul>
+                    </div>
+                
+</div>
+            </nav>
+        </div>
+        <hr class="green-divider">
+        <!-- ===== INVITATION + 연락 모달 ===== -->
+        <section class="invite fade-in" id="invite">
+          <h2 class="h1 text-center pb-3 ww-title fade-in" style="font-size:1.3rem; font-weight:bold; font-family: 'Noto Serif KR',serif;"><span class="ico"><img src="images/icon/heart.png" alt="클로버" width="30" height="30" style="margin-top:-3px"></span><b> 우리의 결혼식에 초대합니다</b></h2>
+          <h3 class="invite-sub fade-in" style= "margin-top:30px;">INVITATION</h3>
+          <div class="invite-text fade-in">
+            오랜 인연이 깊은 사랑이 되어,<br>
+            이제 같은 길을 걸어가려 합니다.<br><br>
+            저희의 행복한 시작에 함께해 주신다면,<br>
+            더없이 기쁨이 될 것입니다.<br>
+            소중한 시간을 내어 축복해 주시면,<br>
+            진심으로 감사드리겠습니다.
+          </div>
+
+          <div class="invite-names fade-in">
+            <div style="display:flex; justify-content:center; gap:25px; text-align:center; font-family: 'Noto Serif KR', serif; font-size:0.8em;">
+              <!-- 신랑측 -->
+              <div style="display:flex; align-items:center; gap:7px;">
+                <div style="text-align:right; line-height:1.6;">
+                  김종길<br>
+                  김순화
+                </div>
+                <div>의 아들 <b style="font-size:1.4em; margin-left:3px">창&nbsp;민</b></div>
+              </div>
+            
+              <!-- 신부측 -->
+              <div style="display:flex; align-items:center; gap:7px;">
+                <div style="text-align:right; line-height:1.6">
+                  김정태<br>
+                  박남희
+                </div>
+                <div>의 딸 <b style="font-size:1.4em; margin-left:3px">나&nbsp;연</b></div>
+              </div>
+            
+            </div>            
+          </div>
+
+          <!-- 열기 버튼에 data-open으로 타깃 지정 -->
+          <button class="text-center invite-btn mt-3" type="button" data-open="#contactModal" id="openContact">
+            <span class="ico"><img src="images/icon/tel.png" alt="" width="16" height="16" style="margin-top:-5px"></span>
+            전화로 축하 인사하기
+          </button>
+        </section>
+
+        <!-- 모달 -->
+        <div id="contactModal" class="contact-modal" aria-hidden="true" role="dialog" aria-labelledby="contactTitle">
+          <div class="contact-backdrop" data-close></div>
+          <div class="contact-panel" role="document">
+            <button class="contact-close" aria-label="닫기" data-close>✕</button>
+
+            <div class="contact-group fade-in">
+              <h4 id="contactTitle" class="contact-head groom fade-in"><img src="images/icon/tel.png" alt="전화" width="20" height="20" style="margin-top:-5px"> 신랑측</h4>
+              <hr>
+              <div class="contact-row fade-in">
+                <div class="who fade-in"><span class="role">신랑</span> <b>김창민</b></div>
+                <div class="acts">
+                  <a class="act" href="tel:010-3523-7831" aria-label="신랑에게 전화"><img src="images/icon/tel.png" alt="전화" width="14" height="14" style="margin-top:-5px"></a>
+                  <a class="act" href="sms:010-3523-7831" aria-label="신랑에게 문자"><img src="images/icon/mes.png" alt="문자" width="14" height="14" style="margin-top:-5px"></a>
+                </div>
+              </div>
+              <div class="contact-row fade-in">
+                <div class="who fade-in"><span class="role">혼주</span> <b>김종길</b></div>
+                <div class="acts">
+                  <a class="act" href="tel:010-8212-7151" aria-label="혼주에게 전화"><img src="images/icon/tel.png" alt="전화" width="14" height="14" style="margin-top:-5px"></a>
+                  <a class="act" href="sms:010-8212-7151" aria-label="혼주에게 문자"><img src="images/icon/mes.png" alt="문자" width="14" height="14" style="margin-top:-5px"></a>
+                </div>
+              </div>
+              <div class="contact-row fade-in">
+                <div class="who fade-in"><span class="role">혼주</span> <b>김순화</b></div>
+                <div class="acts">
+                  <a class="act" href="tel:010-6730-7831" aria-label="혼주에게 전화"><img src="images/icon/tel.png" alt="전화" width="14" height="14" style="margin-top:-5px"></a>
+                  <a class="act" href="sms:010-6730-7831" aria-label="혼주에게 문자"><img src="images/icon/mes.png" alt="문자" width="14" height="14" style="margin-top:-5px"></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="contact-group fade-in">
+              <h4 class="contact-head bride fade-in"><img src="images/icon/tel.png" alt="전화" width="20" height="20" style="margin-top:-5px"> 신부측</h4>
+              <hr class="sep">
+              <div class="contact-row fade-in">
+                <div class="who fade-in"><span class="role">신부</span> <b>김나연</b></div>
+                <div class="acts">
+                  <a class="act" href="tel:010-6646-9601" aria-label="신부에게 전화"><img src="images/icon/tel.png" alt="전화" width="14" height="14"></a>
+                  <a class="act" href="sms:010-6646-9601" aria-label="신부에게 문자"><img src="images/icon/mes.png" alt="문자" width="14" height="14"></a>
+                </div>
+              </div>
+              <div class="contact-row fade-in">
+                <div class="who fade-in"><span class="role">혼주</span> <b>김정태</b></div>
+                <div class="acts">
+                  <a class="act" href="tel:010-6656-9601" aria-label="혼주에게 전화"><img src="images/icon/tel.png" alt="전화" width="14" height="14"></a>
+                  <a class="act" href="sms:010-6656-9601" aria-label="혼주에게 문자"><img src="images/icon/mes.png" alt="문자" width="14" height="14"></a>
+                </div>
+              </div>
+              <div class="contact-row fade-in">
+                <div class="who fade-in"><span class="role">혼주</span> <b>박남희</b></div>
+                <div class="acts">
+                  <a class="act" href="tel:010-3579-9061" aria-label="혼주에게 전화"><img src="images/icon/tel.png" alt="전화" width="14" height="14"></a>
+                  <a class="act" href="sms:010-3579-9061" aria-label="혼주에게 문자"><img src="images/icon/mes.png" alt="문자" width="14" height="14"></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <style>
+        /* 레이아웃/타이포 */
+        .invite{ text-align:center; padding:40px 16px; background-color: #ffffff;}
+        .invite-sub{ letter-spacing:.3em; color:#ffb9c7; margin-bottom:24px; font-weight:600; font-size:1em }
+        .invite-text{ color:#444; line-height:2; margin:0 auto 28px; max-width:560px; }
+        .invite-names{ color:#2c2c2c; line-height:2.4; margin:28px 0 22px; }
+        .invite-btn{
+          display:inline-flex; align-items:center; gap:8px;
+          background:#fff; color:#2c2c2c; border:1px solid #d8d8d8;
+          padding:14px 18px; border-radius:12px; cursor:pointer;
+          box-shadow:0 4px 14px rgba(0,0,0,.06);
+        }
+        .invite-btn:hover{ color:  #808074;
+          text-decoration: underline;
+          background-color: transparent;
+          border-color: transparent;}
+        .invite-btn .ico{ font-size:1.1em }
+
+        /* 모달 베이스 */
+        .contact-modal{ position:fixed; inset:0; display:none; z-index:9999; }
+        .contact-modal[aria-hidden="false"]{ display:block; }
+        .contact-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.72); }
+        .contact-panel{
+          position:absolute; inset:40px 16px auto 16px; top:40px;
+          background:#fff; border-radius:8px; padding:24px;
+          max-width:360px; margin:0 auto; left:0; right:0;
+          box-shadow:0 20px 60px rgba(0,0,0,.35);
+        }
+        .contact-close{
+          position:absolute; top:10px; right:10px;
+          width:36px; height:36px; border:none; border-radius:50%;
+          background:transparent; font-size:20px; cursor:pointer; color:#333;
+        }
+        .contact-head{ margin:6px 0 8px; font-weight:700; }
+        .contact-head.groom{ color:#6a8a72; }
+        .contact-head.bride{ color:#b07a5f; }
+        .sep{ border:none; border-top:1px solid #eadfd8; margin:18px 0 6px; }
+
+        .contact-group + .contact-group{ margin-top:26px; }
+        .contact-row{
+          display:flex; justify-content:space-between; align-items:center;
+          padding:14px 4px;
+        }
+        .role{ color:#6b6b6b; margin-right:8px; }
+        .acts{ display:flex; gap:14px; }
+        .act{
+          font-size:22px; text-decoration:none; line-height:1;
+          color:#4b5a67; padding:6px; border-radius:8px; border:1px solid transparent;
+        }
+        .act:hover{ background:#f2f6f9; border-color:#e6eef3; }
+
+        @media (max-width: 560px){
+          .contact-panel{ inset:32px 12px auto 12px; padding:18px; }
+          .contact-row{ padding:12px 2px; }
+        }
+
+        body.modal-open { overflow: hidden; }
+
+        /* 모달 레이어를 최상단으로 */
+        .contact-modal{ position:fixed; inset:0; z-index:2147483647; display:none; }
+        .contact-modal[aria-hidden="false"]{ display:block; }
+
+        /* 레이어 안에서의 쌓임 순서 지정 */
+        .contact-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.72); z-index:1; }
+        .contact-panel{ position:absolute; inset:40px 16px auto 16px; background:#fff; border-radius:12px; 
+          padding:24px; max-width:360px; margin:0 auto; left:0; right:0; z-index:2; }
+        .contact-close{ position:absolute; top:10px; right:10px; z-index:3; }
+
+        /* 본문이 transform 되는 동안에도 모달은 영향 안 받게 */
+        body.modal-open { overflow:hidden; }
+
+        /* 모달 베이스 */
+.contact-modal{
+  position: fixed; inset: 0; z-index: 9999;
+  display: none;
+  /* iOS에서 뷰포트 기준 스크롤 안정화 */
+  height: 100vh;
+}
+@supports (height: 100dvh){
+  .contact-modal{ height: 100dvh; }
+}
+.contact-modal[aria-hidden="false"]{ display:block; }
+
+/* 배경 어둡게 하지 않음(완전 투명) */
+.contact-backdrop{
+  position: absolute; inset: 0;
+  background: transparent;          /* <- 투명 처리 */
+}
+
+/* 패널은 고정 위치 + 안전영역 고려 + 내부 스크롤 */
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+.contact-panel{
+  position: fixed;
+  top: calc(16px + var(--safe-top));
+  left: 50%;
+  transform: translateX(-50%);
+  right: auto;
+  background:#fff; border-radius:8px; padding:24px;
+  width: min(92vw, 360px);
+  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 32px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
+  box-shadow: 0 20px 60px rgba(0,0,0,.15);
+}
+
+/* 닫기 버튼 동일 */
+.contact-close{
+  position:absolute; top:10px; right:10px;
+  width:36px; height:36px; border:none; border-radius:50%;
+  background:transparent; font-size:20px; cursor:pointer; color:#333;
+}
+
+/* 모바일 살짝 여백 축소 */
+@media (max-width: 560px){
+  .contact-panel{ padding:18px; }
+}
+
+        </style>
+
+        <script>
+          // 문서 전체 위임
+          (function(){
+            // 열기: data-open="#selector"
+            document.addEventListener('click', (e) => {
+              const opener = e.target.closest('[data-open]');
+              if (!opener) return;
+              e.preventDefault();
+              const sel = opener.getAttribute('data-open');
+              const modal = document.querySelector(sel);
+              if (!modal) return;
+              modal.setAttribute('aria-hidden','false');
+              document.body.classList.add('modal-open');
+              const closeBtn = modal.querySelector('.contact-close');
+              if (closeBtn) setTimeout(()=>closeBtn.focus(), 0);
+            });
+          
+            // 닫기: data-close가 달린 요소(✕버튼, backdrop 등)
+            document.addEventListener('click', (e) => {
+              const closer = e.target.closest('[data-close]');
+              if (!closer) return;
+              const modal = closer.closest('.contact-modal');
+              if (!modal) return;
+              modal.setAttribute('aria-hidden','true');
+              document.body.classList.remove('modal-open');
+            });
+          
+            // ESC 닫기
+            document.addEventListener('keydown', (e) => {
+              if (e.key !== 'Escape') return;
+              document.querySelectorAll('.contact-modal[aria-hidden="false"]').forEach(modal=>{
+                modal.setAttribute('aria-hidden','true');
+              });
+              document.body.classList.remove('modal-open');
+            });
+          })();
+          </script>
           
           <hr class="green-divider">
 
