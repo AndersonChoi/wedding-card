@@ -10050,7 +10050,7 @@ body {
 
 .ww-section {
     background-color: #ffffff !important;
-    padding: 100px 0;
+    padding: 10px 0;
 }
 
 .btn-primary {
@@ -10236,3 +10236,4 @@ body {
     border-radius:8px; color:#9a8f82; transition: background .2s, color .2s;
   }
   .gb-del:hover{ background:#fff3ee; color:#c35b4e; }
+  
