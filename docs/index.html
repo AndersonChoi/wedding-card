@@ -1557,8 +1557,8 @@ window.addEventListener('DOMContentLoaded', () => {
   // (B) 로딩 글자 애니 후: 게이트 해제 → 옵저버 시작 → 오버레이 제거
   (function(){
     const MESSAGE = "Happy\nWedding\nDay";
-    const STEP_MS = 0; <!--180, 800-->
-    const EXTRA_WAIT_MS = 0;
+    const STEP_MS = 180; <!--180, 800-->
+    const EXTRA_WAIT_MS = 800;
 
     const overlay = document.getElementById('loadingOverlay');
     const textBox = document.getElementById('loadingText');
