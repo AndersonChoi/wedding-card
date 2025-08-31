@@ -5,6 +5,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Preload: 폰트 먼저 가져오기 (모바일 웹뷰 안정화) -->
 
+  <meta property="og:title" content="청담 플래그십 스토어 오픈">
+  <meta property="og:image" content="https://example.com/intro.jpg">
+  <meta property="og:description" content="패션 브랜드 'SAM APPAREL'가 ...">
 
   <style>
   /* 전체를 덮는 로딩 오버레이 */
@@ -891,7 +894,7 @@ img, iframe { max-width: 100%; height: auto; }
   <div class="gb--divider" aria-hidden="true"></div>
   <div id="guestbookList" style="padding:16px 0;"></div>
 </section-->
-<style>
+<!--style>
   /* 전체 폰트 & 색상 */
   /* 전역 body는 건드리지 말고, 방명록 섹션만 */
   #guestbookSection,
@@ -996,7 +999,7 @@ background:
     background: #ffecec;
     color: #d9534f;
   }
-</style>
+</style-->
 
 
 
@@ -1036,7 +1039,7 @@ background:
   color: #333;
 }
 .copy:hover {
-  background-color: #e6e6e6;
+  background-color: #383838;
 }
 
 /* 복사 완료 토스트 */
@@ -1063,13 +1066,20 @@ background:
 <div id="toast" class="toast">링크가 복사되었습니다!</div>
 
 <script>
-// 링크 복사 기능
-document.querySelector('.copy').addEventListener('click', function() {
-  const link = this.dataset.link;
-  navigator.clipboard.writeText(link).then(() => {
-    const toast = document.getElementById('toast');
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 1500);
+document.addEventListener('DOMContentLoaded', () => {
+  const copyBtns = document.querySelectorAll('.copy');
+  copyBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const link = btn.dataset.link || location.href;
+      navigator.clipboard.writeText(link).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 1500);
+      }).catch(err => {
+        console.error('Clipboard error:', err);
+        alert('복사에 실패했습니다. 길게 눌러 복사해주세요.');
+      });
+    });
   });
 });
 </script>
@@ -1374,51 +1384,60 @@ window.addEventListener('DOMContentLoaded', () => {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- 공유/복사 영역 -->
-<div class="share-section fade-in">
-  <!-- 카카오톡 공유 -->
-  <a id="kakaotalk-sharing-btn" href="javascript:;">
-    <img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
-      alt="카카오톡 공유 보내기 버튼" />
+<div class="share-section">
+  <!-- 1. 카카오톡 공유 버튼 -->
+  <a id="kakaotalk-share-btn" class="share-btn kakao" href="javascript:void(0);" aria-label="카카오톡 공유하기">
+    <span class="icon"><img src="images/icon/chat.png" alt="카카오" width=16 height=16 style="margin-top:-3px"></span>
+    카카오톡 공유하기
   </a>
-  <!-- 링크 복사 -->
-  <button class="share-btn copy fade-in" data-link="https://mylove-wedding.info">
-    <span class="icon fade-in">🔗</span>
+
+  <!-- 2. 링크 복사 버튼 -->
+  <button class="share-btn copy" data-link="https://mylove-wedding.info">
+    <span class="icon">🔗</span>
     링크 복사하기
   </button>
 </div>
 
+
+
+
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.7/kakao.min.js" integrity="sha384-tJkjbtDbvoxO+diRuDtwRO9JXR7pjWnfjfRn5ePUpl7e7RJCxKCwwnfqUAdXh53p" crossorigin="anonymous"></script>
 
 <script>
-  Kakao.init('64c9ee23e4db51f2e977d6cb41ca67ea ');  // 사용하려는 앱의 JavaScript 키 입력
-  Kakao.isInitialized();
+Kakao.init('64c9ee23e4db51f2e977d6cb41ca67ea');
+Kakao.isInitialized();
 </script>
 
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Kakao JavaScript SDK</title>
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.7/kakao.min.js" integrity="sha384-tJkjbtDbvoxO+diRuDtwRO9JXR7pjWnfjfRn5ePUpl7e7RJCxKCwwnfqUAdXh53p" crossorigin="anonymous"></script>
+    <script>
+    // SDK를 초기화 합니다. 사용할 앱의 JavaScript 키를 설정해야 합니다.
+    Kakao.init('64c9ee23e4db51f2e977d6cb41ca67ea');
 
-<a id="kakaotalk-sharing-btn" href="javascript:;">
-  <img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
-    alt="카카오톡 공유 보내기 버튼" />
-</a>
-
-<div id="btnKakao">
-  <img src="/img/sns_kakao.png" id="kakao-link-btn" alt="카카오톡 링크 공유하기">
-</div>
-
-
-<script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
-<script type='text/javascript'>
-  //<![CDATA[
-  // // 사용할 앱의 JavaScript 키를 설정해 주세요.
-  Kakao.init('64c9ee23e4db51f2e977d6cb41ca67ea');
-  // // 카카오링크 버튼을 생성합니다. 처음 한번만 호출하면 됩니다.
-  Kakao.Link.createScrapButton({
-      container: '#kakao-link-btn',
-      requestUrl: 'URL 주소 입력',
-      templateId : 123852 
-  });
-  //]]>
-</script>
-</body>
-
-
+    // SDK 초기화 여부를 판단합니다.
+    console.log(Kakao.isInitialized());
+  </script>
+  <script>
+    Kakao.Share.createCustomButton({
+      container: '#kakaotalk-share-btn',
+      templateId: 123852,
+      templateArgs: {
+        title: '제목 영역입니다.',
+        description: '설명 영역입니다.',
+      },
+    });
+  </script>
+</head>
+<body></body>
 </html>
+
+
+
+</body>
+</html>
+
+ 
