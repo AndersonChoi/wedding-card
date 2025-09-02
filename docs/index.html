@@ -1884,11 +1884,43 @@ Kakao.isInitialized();
       container: '#kakaotalk-share-btn',
       templateId: 123852,
       templateArgs: {
-        title: '제목 영역입니다.',
-        description: '설명 영역입니다.',
+        title: '우리의 결혼식에 소중한 인연을 초대합니다🤍',
+        description: '9월 20일 2시 수원 호텔리츠컨벤션웨딩',
       },
     });
   </script>
+
+  <script>
+  Kakao.Link.sendDefault({
+    objectType: 'feed',
+    content: {
+      title: '우리의 결혼식에 소중한 인연을 초대합니다🤍',
+      description: '9월 20일 2시 수원 호텔리츠컨벤션웨딩',
+      imageUrl:
+        'images/main-background.jpeg',
+      imageWidth: 1200,
+      imageHeight: 630,
+      link: {
+        mobileWebUrl: 'mylove-wedding.info',
+        androidExecutionParams: 'test',
+      },
+    },
+    itemContent: {
+      profileText: '창민🤵🏻 그리고 나연👰🏻‍',
+      profileImageUrl:
+        'images/main-background.jpeg',
+    },
+    buttons: [
+      {
+        title: '모바일 청첩장',
+        link: {
+          mobileWebUrl: 'https://mylove-wedding.info',
+          webUrl: 'https://mylove-wedding.info',
+        },
+      },
+    ],
+  });
+</script>
 </head>
 <body></body>
 </html>
