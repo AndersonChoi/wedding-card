@@ -359,7 +359,7 @@ img, iframe { max-width: 100%; height: auto; }
         </section>
 
         <!-- 모달 -->
-        <div id="contactModal" class="contact-modal" aria-hidden="true" role="dialog" aria-labelledby="contactTitle">
+        <div id="contactModal" class="contact-modal" aria-hidden="true" role="dialog" aria-labelledby="contactTitle" >
           <div class="contact-backdrop" data-close></div>
           <div class="contact-panel" role="document">
             <button class="contact-close" aria-label="닫기" data-close>✕</button>
@@ -439,12 +439,7 @@ img, iframe { max-width: 100%; height: auto; }
         .contact-modal{ position:fixed; inset:0; display:none; z-index:9999; }
         .contact-modal[aria-hidden="false"]{ display:block; }
         .contact-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.72); }
-        .contact-panel{
-          position:absolute; inset:40px 16px auto 16px; top:40px;
-          background:#fff; border-radius:8px; padding:24px;
-          max-width:360px; margin:0 auto; left:0; right:0;
-          box-shadow:0 20px 60px rgba(0,0,0,.35);
-        }
+        
         .contact-close{
           position:absolute; top:10px; right:10px;
           width:36px; height:36px; border:none; border-radius:50%;
@@ -481,8 +476,6 @@ img, iframe { max-width: 100%; height: auto; }
 
         /* 레이어 안에서의 쌓임 순서 지정 */
         .contact-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.72); z-index:1; }
-        .contact-panel{ position:absolute; inset:40px 16px auto 16px; background:#fff; border-radius:12px; 
-          padding:24px; max-width:360px; margin:0 auto; left:0; right:0; z-index:2; }
         .contact-close{ position:absolute; top:10px; right:10px; z-index:3; }
 
         /* 본문이 transform 되는 동안에도 모달은 영향 안 받게 */
@@ -511,19 +504,6 @@ img, iframe { max-width: 100%; height: auto; }
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
-.contact-panel{
-  position: fixed;
-  top: calc(16px + var(--safe-top));
-  left: 50%;
-  transform: translateX(-50%);
-  right: auto;
-  background:#fff; border-radius:8px; padding:24px;
-  width: min(92vw, 360px);
-  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 32px);
-  overflow: auto;
-  -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
-  box-shadow: 0 20px 60px rgba(0,0,0,.15);
-}
 
 /* 닫기 버튼 동일 */
 .contact-close{
@@ -537,44 +517,203 @@ img, iframe { max-width: 100%; height: auto; }
   .contact-panel{ padding:18px; }
 }
 
+/* 전체 레이어는 고정, 높이 고정 */
+.contact-modal{
+  position: fixed; inset: 0; z-index: 2147483647; display: none;
+  overflow: hidden;           /* 바깥(배경)은 스크롤 X */
+  height: 100vh;
+}
+@supports (height: 100dvh){
+  .contact-modal{ height: 100dvh; }
+}
+.contact-modal[aria-hidden="false"]{ display:block; }
+
+/* 패널만 스크롤 */
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+/* 딱 1번만 선언! */
+.contact-panel{
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(92vw, 360px);
+  max-height: calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 32px);
+  overflow: auto; -webkit-overflow-scrolling: touch;
+  background:#fff; border-radius:12px; padding:24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.15);
+
+  /* 여기만 바꾸면 끝! */
+  top: var(--modal-top, calc(16px + env(safe-area-inset-top,0px)));
+}
+
+/* ===== [iOS PATCH] Overlay/Viewport/Safe-Area ===== */
+:root{ --vh: 1vh; } /* JS가 실제 값으로 갱신 */
+
+.contact-modal{
+  /* 오버레이 자체를 스크롤 컨테이너로 */
+  overflow: auto !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  height: 100vh;                 /* 기본 */
+  height: calc(var(--vh) * 100); /* iOS 보정 */
+}
+@supports (height: 100svh){
+  .contact-modal{ height: 100svh; }  /* 최신 사파리 */
+}
+
+/* 모달 열려있을 때 본문 트랜스폼 영향 제거(사파리 fixed 버그 회피) */
+.modal-open #pageContent{ transform: none !important; }
+
+/* 패널은 내부 스크롤만 유지 */
+.contact-panel{
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(92vw, 360px);
+  max-height: calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 32px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  top: var(--modal-top, calc(16px + env(safe-area-inset-top,0px)));
+  box-shadow: 0 20px 60px rgba(0,0,0,.15);
+  background:#fff; border-radius:12px; padding:24px;
+  z-index: 2;
+}
+
+/* 배경 클릭 닫기 영역은 패널 뒤 */
+.contact-backdrop{
+  position:absolute; inset:0; background: transparent; z-index:1;
+}
+
+/* 아주 작을 때 버튼 누르기 쉽게 */
+@media (max-width:560px){
+  .contact-panel{ padding:18px; }
+}
+
         </style>
 
         <script>
-          // 문서 전체 위임
-          (function(){
-            // 열기: data-open="#selector"
-            document.addEventListener('click', (e) => {
+          // 모달 열고 닫을 때만 쓰는 바디 락/언락
+
+            /* ===== [iOS PATCH] 정확한 100vh 보정 ===== */
+            (function(){
+              const root = document.documentElement;
+              function setVH(){
+                const h = (window.visualViewport?.height || window.innerHeight) * 0.01;
+                root.style.setProperty('--vh', h + 'px');
+              }
+              setVH();
+              window.addEventListener('resize', setVH);
+              if (window.visualViewport){
+                visualViewport.addEventListener('resize', setVH);
+                visualViewport.addEventListener('scroll', setVH);
+              }
+            })();
+            
+            /* ===== [iOS PATCH] 모달을 body 직속으로 옮겨 transform 버그 회피 ===== */
+            document.addEventListener('DOMContentLoaded', () => {
+              const m = document.getElementById('contactModal');
+              if (m && m.parentNode !== document.body) document.body.appendChild(m);
+            });
+            
+            /* ===== [iOS PATCH] 열기/닫기 유틸 + 오버레이 스크롤 보정 ===== */
+            let _scrollY = 0;
+            function lockBody(){
+              _scrollY = window.scrollY || window.pageYOffset;
+              document.body.style.position = 'fixed';
+              document.body.style.top = `-${_scrollY}px`;
+              document.body.style.left = '0';
+              document.body.style.right = '0';
+              document.body.style.width = '100%';
+              document.body.classList.add('modal-open');
+            }
+            function unlockBody(){
+              document.body.style.position = '';
+              document.body.style.top = '';
+              document.body.style.left = '';
+              document.body.style.right = '';
+              document.body.style.width = '';
+              document.body.classList.remove('modal-open');
+              window.scrollTo(0, _scrollY);
+            }
+            
+            function openModalBySelector(sel){
+              const modal = document.querySelector(sel);
+              if (!modal) return;
+              modal.setAttribute('aria-hidden', 'false');
+              lockBody();
+              // 큰 --modal-top 값도 보이게: 오버레이를 그 위치까지 스크롤
+              const panel = modal.querySelector('.contact-panel');
+              if (panel){
+                // 현재 패널의 화면 내 위쪽 거리만큼 오버레이 스크롤 올림
+                requestAnimationFrame(() => {
+                  const rect = panel.getBoundingClientRect();
+                  modal.scrollTop += Math.max(0, rect.top - 16);
+                });
+              }
+            }
+            
+            function closeCurrentModal(){
+              document.querySelectorAll('.contact-modal[aria-hidden="false"]').forEach(m=>{
+                m.setAttribute('aria-hidden','true');
+              });
+              unlockBody();
+            }
+            
+            /* 기존 열기 리스너 대체 (data-open 유지) */
+            document.addEventListener('click', (e)=>{
               const opener = e.target.closest('[data-open]');
               if (!opener) return;
               e.preventDefault();
-              const sel = opener.getAttribute('data-open');
-              const modal = document.querySelector(sel);
-              if (!modal) return;
-              modal.setAttribute('aria-hidden','false');
-              document.body.classList.add('modal-open');
-              const closeBtn = modal.querySelector('.contact-close');
-              if (closeBtn) setTimeout(()=>closeBtn.focus(), 0);
-            });
-          
-            // 닫기: data-close가 달린 요소(✕버튼, backdrop 등)
-            document.addEventListener('click', (e) => {
+              openModalBySelector(opener.getAttribute('data-open'));
+            }, {passive:false});
+            
+            /* ✕/배경 닫기 */
+            document.addEventListener('click', (e)=>{
               const closer = e.target.closest('[data-close]');
-              if (!closer) return;
-              const modal = closer.closest('.contact-modal');
+              if (closer){
+                const modal = closer.closest('.contact-modal');
+                if (modal) { modal.setAttribute('aria-hidden','true'); unlockBody(); }
+                return;
+              }
+              // 배경 클릭으로 닫기: 패널 바깥을 눌렀을 때만
+              const modal = document.querySelector('.contact-modal[aria-hidden="false"]');
               if (!modal) return;
-              modal.setAttribute('aria-hidden','true');
-              document.body.classList.remove('modal-open');
+              const panel = modal.querySelector('.contact-panel');
+              if (modal.contains(e.target) && panel && !panel.contains(e.target)){
+                modal.setAttribute('aria-hidden','true'); unlockBody();
+              }
+            }, {passive:true});
+            
+            /* ESC 닫기 */
+            document.addEventListener('keydown', (e)=>{
+              if (e.key === 'Escape') closeCurrentModal();
             });
-          
-            // ESC 닫기
-            document.addEventListener('keydown', (e) => {
-              if (e.key !== 'Escape') return;
-              document.querySelectorAll('.contact-modal[aria-hidden="false"]').forEach(modal=>{
-                modal.setAttribute('aria-hidden','true');
-              });
-              document.body.classList.remove('modal-open');
-            });
-          })();
+            
+            /* ===== [iOS PATCH] 키보드 올라올 때 패널 가려짐 방지 ===== */
+            (function(){
+              const modal = document.getElementById('contactModal');
+              if (!modal || !window.visualViewport) return;
+              const vv = window.visualViewport;
+              const panel = modal.querySelector('.contact-panel');
+            
+              function keepPanelVisible(){
+                if (!panel || modal.getAttribute('aria-hidden') === 'true') return;
+                const margin = 12;
+                const rect = panel.getBoundingClientRect();
+                // 패널 하단이 가려지면 오버레이를 더 내려서 보이게
+                const overflow = (rect.bottom + margin) - vv.height;
+                if (overflow > 0){
+                  modal.scrollTop += overflow;
+                }
+              }
+            
+              vv.addEventListener('resize', keepPanelVisible);
+              vv.addEventListener('scroll', keepPanelVisible);
+            })();
+
           </script>
           
           <hr class="green-divider">
@@ -683,33 +822,33 @@ img, iframe { max-width: 100%; height: auto; }
                             <!-- 갤러리 카드들 -->
                         <div class="card-columns mt-4 fade-in"></div>
                         <div class="card-columns fade-in">
-                            <div class="card fade-in" data-groups="[&quot;party&quot;,&quot;wedding&quot;]">
+                            <div class="card" data-groups="[&quot;party&quot;,&quot;wedding&quot;]">
                                 <a data-gallery="ww-gallery" data-toggle="lightbox">
                                     <img alt="Gallery Pic 2" class="img-fluid" src="images/pic2.jpeg"/>
                                 </a>
                             </div>
-                            <div class="card fade-in" data-groups="[&quot;vacation&quot;]">
+                            <div class="card" data-groups="[&quot;vacation&quot;]">
                                 <a data-gallery="ww-gallery" data-toggle="lightbox">
                                     <img alt="Gallery Pic 3" class="img-fluid" src="images/pic7.jpeg"/>
                                 </a>
                             </div>
-                            <div class="card fade-in" data-groups="[&quot;party&quot;,&quot;vacation&quot;]">
+                            <div class="card" data-groups="[&quot;party&quot;,&quot;vacation&quot;]">
                                 <a data-gallery="ww-gallery" data-toggle="lightbox">
                                     <img alt="Gallery Pic 4" class="img-fluid" src="images/pic6.jpeg"/>
                                 </a>
                             </div>
-                            <div class="card fade-in" data-groups="[&quot;vacation&quot;]">
+                            <div class="card" data-groups="[&quot;vacation&quot;]">
                                 <a data-gallery="ww-gallery" data-toggle="lightbox">
                                     <img alt="Gallery Pic 5" class="img-fluid" src="images/pic4.jpeg"/>
                                 </a>
                             </div>
-                            <div class="card fade-in"
+                            <div class="cardn"
                                  data-groups="[&quot;wedding&quot;,&quot;ceremony&quot;,&quot;party&quot;]">
                                 <a data-gallery="ww-gallery" data-toggle="lightbox">
                                     <img alt="Gallery Pic 6" class="img-fluid" src="images/pic3.jpeg"/>
                                 </a>
                             </div>
-                            <div class="card fade-in" data-groups="[&quot;vacation&quot;]">
+                            <div class="card" data-groups="[&quot;vacation&quot;]">
                                 <a data-gallery="ww-gallery" data-toggle="lightbox">
                                     <img alt="Gallery Pic 7" class="img-fluid" src="images/pic9.jpeg"/>
                                 </a>
@@ -735,7 +874,7 @@ img, iframe { max-width: 100%; height: auto; }
               <hr class="green-divider">
                     <br>
                     <h2 class="h1 text-center pb-3 ww-title fade-in" style="font-size:1.5rem; font-weight:bold; font-family: 'Noto Serif KR',serif"><span class="ico"><img src="images/icon/heart.png" alt="클로버" width="30" height="30" style="margin-top:-3px"></span><b> 오시는 길</b></h2>
-                        <h5 style="font-family: 'Noto Serif KR', serif; font-size:1rem; font-weight:600; text-align:center;">호텔리츠컨벤션웨딩 7층 빌라 드 샬롯홀</h5>
+                        <h5 style="font-family: 'Noto Serif KR', serif; font-size:1rem; font-weight:600; text-align:center;">호텔리츠컨벤션웨딩 8층 빌라 드 샬롯홀</h5>
                         <h6 style="font-family: 'Noto Serif KR', serif; text-align:center">(경기 수원시 팔달구 권광로134번길 46)</h6>
                 <div class="form-group fade-in">
                     <div class="col-md-12 fade-in">
@@ -789,13 +928,13 @@ img, iframe { max-width: 100%; height: auto; }
                 <!-- 항목 -->
                 <div class="gift-row fade-in">
                 <div class="gift-info fade-in">
-                    <div class="who fade-in"><b>신랑 김창민</b></div>
-                    <div class="bank fade-in" style="transition-delay: 240ms; left: -16px; top: -44px;">토스뱅크 <span class="acct">1000-2198-4655</span></div>
+                    <div class="who"><b>신랑 김창민</b></div>
+                    <div class="bank" style="transition-delay: 240ms; left: -16px; top: -44px;">토스뱅크 <span class="acct">1000-2198-4655</span></div>
                 </div>
-                <div class="gift-actions fade-in">
+                <div class="gift-actions">
                     <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej7ps3prE" target="_blank" rel="noopener" style="font-size:0.8em"><img src="images/icon/chat.png" alt="카카오" width=10 height=10 style="margin-top:-3px">
                       카카오페이 송금</a-->
-                    <button class="btn ghost fade-in" data-copy="1000-2198-4655" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
+                    <button class="btn ghost" data-copy="1000-2198-4655" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
                 </div>
                 </div>
 
@@ -803,12 +942,12 @@ img, iframe { max-width: 100%; height: auto; }
 
                 <div class="gift-row fade-in">
                 <div class="gift-info fade-in">
-                    <div class="who fade-in"><b>혼주 김종길</b></div>
-                    <div class="bank fade-in">국민은행 <span class="acct">284001-04-164529</span></div>
+                    <div class="who"><b>혼주 김종길</b></div>
+                    <div class="bank">국민은행 <span class="acct">284001-04-164529</span></div>
                 </div>
-                <div class="gift-actions fade-in">
+                <div class="gift-actions">
                     <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej7ps3prE" target="_blank" rel="noopener">카카오페이 송금</a-->
-                    <button class="btn ghost fade-in" data-copy="284001-04-164529" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
+                    <button class="btn ghost" data-copy="284001-04-164529" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
                 </div>
                 </div>
 
@@ -816,12 +955,12 @@ img, iframe { max-width: 100%; height: auto; }
 
                 <div class="gift-row fade-in">
                 <div class="gift-info fade-in">
-                    <div class="who fade-in"><b>혼주 김순화</b></div>
-                    <div class="bank fade-in">우리은행 <span class="acct">477-08-018573</span></div>
+                    <div class="who"><b>혼주 김순화</b></div>
+                    <div class="bank">우리은행 <span class="acct">477-08-018573</span></div>
                 </div>
-                <div class="gift-actions fade-in">
+                <div class="gift-actions">
                     <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej7ps3prE" target="_blank" rel="noopener">카카오페이 송금</a-->
-                    <button class="btn ghost fade-in" data-copy="477-08-018573" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px">  복사</button>
+                    <button class="btn ghost" data-copy="477-08-018573" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px">  복사</button>
                 </div>
                 </div>
             </div>
@@ -842,13 +981,13 @@ img, iframe { max-width: 100%; height: auto; }
             <div class="gift-body fade-in">
                 <div class="gift-row fade-in">
                   <div class="gift-info fade-in">
-                      <div class="who fade-in"><b>신부 김나연</b></div>
-                      <div class="bank fade-in" style="transition-delay: 240ms; left: -16px; top: -44px;">카카오뱅크 <span class="acct">3333-03-8624607</span></div>
+                      <div class="who"><b>신부 김나연</b></div>
+                      <div class="bank" style="transition-delay: 240ms; left: -16px; top: -44px;">카카오뱅크 <span class="acct">3333-03-8624607</span></div>
                   </div>
-                  <div class="gift-actions fade-in">
+                  <div class="gift-actions">
                       <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej8tLCSV3" target="_blank" rel="noopener" style="font-size:0.8em"><img src="images/icon/chat.png" alt="카카오" width=10 height=10 style="margin-top:-3px">
                         카카오페이 송금</a-->
-                        <button class="btn ghost fade-in" data-copy="3333-03-8624607" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
+                        <button class="btn ghost" data-copy="3333-03-8624607" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
                   </div>
                 </div>
 
@@ -856,12 +995,12 @@ img, iframe { max-width: 100%; height: auto; }
 
                 <div class="gift-row fade-in">
                 <div class="gift-info fade-in">
-                    <div class="who fade-in"><b>혼주 김정태</b></div>
-                    <div class="bank fade-in">우리은행 <span class="acct fade-in">1002-559-748147</span></div>
+                    <div class="who"><b>혼주 김정태</b></div>
+                    <div class="bank">우리은행 <span class="acctn">1002-559-748147</span></div>
                 </div>
-                <div class="gift-actions fade-in">
+                <div class="gift-actions">
                     <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/예시" target="_blank" rel="noopener">카카오페이 송금</a-->
-                    <button class="btn ghost fade-in" data-copy="1002-559-748147" style="font-size:0.8em"> <img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
+                    <button class="btn ghost" data-copy="1002-559-748147" style="font-size:0.8em"> <img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
                 </div>
                 </div>
 
@@ -869,12 +1008,12 @@ img, iframe { max-width: 100%; height: auto; }
 
                 <div class="gift-row fade-in">
                 <div class="gift-info fade-in">
-                    <div class="who fade-in"><b>혼주 박남희</b></div>
-                    <div class="bank fade-in">국민은행 <span class="acct fade-in">240-24-0175-570</span></div>
+                    <div class="who"><b>혼주 박남희</b></div>
+                    <div class="bank">국민은행 <span class="acct">240-24-0175-570</span></div>
                 </div>
-                <div class="gift-actions fade-in">
+                <div class="gift-actions">
                     <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/예시" target="_blank" rel="noopener">카카오페이 송금</a-->
-                    <button class="btn ghost fade-in" data-copy="240-24-0175-570" style="font-size:0.8em"> <img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
+                    <button class="btn ghost" data-copy="240-24-0175-570" style="font-size:0.8em"> <img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
                 </div>
                 </div>
             </div>
@@ -1636,7 +1775,7 @@ window.addEventListener('DOMContentLoaded', () => {
         document.body.classList.remove('no-scroll');
         document.body.style.removeProperty('overflow');
         document.body.style.removeProperty('height'); 
-        window.scrollTo(0,0);
+        // window.scrollTo(0,0);
         sessionStorage.setItem('weddingLoaded','1');
       });
     }, total);
