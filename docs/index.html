@@ -146,12 +146,12 @@ header{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgb
 <script>
 let CR='6mo',CT='',sB=true,sM=true,SD=null,AS=[];
 const RANGE_MO={'3mo':3,'6mo':6,'1y':12,'2y':24};
-function getKey(){return document.getElementById('ak').value.trim()||'';}
+function getKey(){return document.getElementById('ak').value.trim()||'VO9JTUFF4F1H5EF5';}
 function saveKey(v){localStorage.setItem('avKey',v.trim());}
 function getWorkerUrl(){return document.getElementById('wk').value.trim()||'';}
 function saveWorkerUrl(v){localStorage.setItem('cfWorkerUrl',v.trim());}
 window.addEventListener('load',()=>{
-  const k=localStorage.getItem('avKey');if(k)document.getElementById('ak').value=k;
+  const k=localStorage.getItem('avKey')||'VO9JTUFF4F1H5EF5';document.getElementById('ak').value=k;
   const w=localStorage.getItem('cfWorkerUrl');if(w)document.getElementById('wk').value=w;
 });
 function setR(r){CR=r;document.querySelectorAll('.rb').forEach((b,i)=>b.classList.toggle('active',['3mo','6mo','1y','2y'][i]===r));if(CT)load(CT);}
