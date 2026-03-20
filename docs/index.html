@@ -1,1933 +1,455 @@
 <!DOCTYPE html>
-<html lang="en-US" data-loading="1">
-
+<html lang="ko">
 <head>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Preload: 폰트 먼저 가져오기 (모바일 웹뷰 안정화) -->
-
-  <style>
-  /* 전체를 덮는 로딩 오버레이 */
-  #loadingOverlay{
-    position:fixed; inset:0; z-index:99999;
-    display:flex; align-items:center; justify-content:center;
-    background:#d3bfbb;
-    font-family:'Great Vibes', cursive;
-  }
-  .load-text{ font-size:clamp(36px, 6vw, 64px); color:#ffb9c7; white-space:pre-line; text-align:center; }
-  .char{ opacity:0; transition:opacity .5s; }
-  .char.show{ opacity:1; }
-
-  /* 본문은 처음엔 숨김 */
-  #pageContent{ visibility:hidden; }
-
-
-  /* 로딩 중 스크롤 잠금 */
-  body.no-scroll {
-    overflow: hidden;
-    height: 100vh;
-  }
-
-  /* 본문은 처음에 보이지 않게 + 페이드인 준비 */
-  #pageContent {
-    opacity: 0;
-    visibility: hidden;          /* 레이아웃은 유지, 화면엔 안 보이게 */
-    transform: translateY(8px);   /* 살짝 아래서 올라오도록 */
-    transition: opacity .6s ease, transform .6s ease, visibility 0s linear .6s;
-    /* visibility는 .show가 되기 전까지 숨김 유지, .6s 뒤 보이도록 딜레이 */
-    will-change: opacity, transform;
-  }
-  /* 로딩 끝난 뒤 클래스 추가되면 등장 */
-  #pageContent.show {
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    transition: opacity .6s ease, transform .6s ease, visibility 0s; /* 즉시 보이기 */
-  }
-
-  /* 모션 최소화 설정을 존중 */
-  @media (prefers-reduced-motion: reduce) {
-    #pageContent { transition: none; transform: none; }
-  }
-
-  /* 로딩 오버레이가 확실히 덮도록 */
-  #loadingOverlay {
-    position: fixed; inset: 0; z-index: 99999;
-    display: flex; align-items: center; justify-content: center;
-    background: rgb(255, 255, 255);
-  }
-
-  body {
-    font-family: 'Noto Serif KR', 'Apple SD Gothic Neo', 'Malgun Gothic', serif;
-  }
-  
-</style>
-  
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📈 SIGNALLAB</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  @media (max-width: 480px){
-  #guestbookForm{ grid-template-columns: 1fr; }
-  }
-  /* 한 번만 선언해두면 잔여 1~2px 넘침 방지에 좋아요 */
-  *, *::before, *::after { box-sizing: border-box; }
-  html, body { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
-
-/* 폼의 1열을 '줄어들 수 있는' 열로 */
-#guestbookForm{
-  grid-template-columns: minmax(0,1fr) auto;
-  max-width: 100%;
-  }
-
-  #guestbookList{
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    max-width: 100%;
-  }
-
-/* 그리드 자식이 줄어들도록 강제 (KaKao WebView 중요) */
-#guestbookForm > * { min-width: 0; }
-#guestbookForm input,
-#guestbookForm textarea,
-#guestbookForm button { max-width: 100%; }
-
+:root{--bg:#060b14;--sf:#0d1526;--s2:#111d33;--br:#1a2d4a;--b2:#243855;--gn:#00e676;--rd:#ff1744;--bl:#2979ff;--or:#ff9100;--t:#cdd9f0;--t2:#7a9cc4;--t3:#3d5a7c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--t);font-family:'Space Grotesk',sans-serif;height:100vh;overflow:hidden;position:relative}
+body::before{content:'';position:fixed;inset:0;background:linear-gradient(rgba(41,121,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(41,121,255,.02) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+header{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(13,21,38,.98);border-bottom:1px solid var(--br);position:relative;z-index:2;flex-wrap:wrap}
+.logo{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--gn);white-space:nowrap;text-shadow:0 0 14px rgba(0,230,118,.4)}
+.logo span{color:var(--t2)}
+.sw{display:flex;align-items:center;background:var(--sf);border:1px solid var(--b2);border-radius:6px;padding:0 10px;gap:6px;flex:1;min-width:200px;max-width:340px;transition:all .2s}
+.sw:focus-within{border-color:var(--bl);box-shadow:0 0 14px rgba(41,121,255,.25)}
+#ti{background:none;border:none;outline:none;color:var(--t);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;width:100%;padding:8px 0;text-transform:uppercase;letter-spacing:.5px}
+#ti::placeholder{color:var(--t3);font-weight:400;text-transform:none;font-size:11px;letter-spacing:0}
+.hints{display:flex;gap:3px;flex-wrap:wrap}
+.h{font-size:10px;padding:3px 7px;border-radius:3px;background:var(--s2);border:1px solid var(--br);color:var(--t3);cursor:pointer;transition:all .15s;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.h:hover{color:var(--t);border-color:var(--b2)}
+.rbs{display:flex;gap:3px}
+.rb{background:var(--sf);border:1px solid var(--br);color:var(--t2);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:4px 9px;border-radius:4px;cursor:pointer;transition:all .15s}
+.rb.active{background:rgba(41,121,255,.15);border-color:var(--bl);color:var(--bl)}
+.ibs{display:flex;gap:3px}
+.ib{background:var(--sf);border:1px solid var(--br);color:var(--t2);font-size:9px;font-weight:600;padding:4px 8px;border-radius:4px;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s}
+.ib[data-i=bb].on{border-color:rgba(0,230,118,.4);color:var(--gn);background:rgba(0,230,118,.05)}
+.ib[data-i=ma].on{border-color:rgba(255,145,0,.4);color:var(--or);background:rgba(255,145,0,.05)}
+.layout{display:flex;height:calc(100vh - 50px)}
+.ca{flex:1;display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--br)}
+.ib2{display:flex;align-items:center;gap:14px;padding:8px 14px;background:var(--sf);border-bottom:1px solid var(--br);flex-shrink:0;min-height:42px}
+.cw{flex:1;position:relative;display:flex;flex-direction:column;overflow:hidden}
+#mc{flex:1;min-height:260px}
+#rc{height:90px;border-top:1px solid var(--br)}
+#dc{height:90px;border-top:1px solid var(--br)}
+.ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:5;background:rgba(6,11,20,.95)}
+.ov .ico{font-size:40px;opacity:.2}
+.ov .txt{font-size:12px;color:var(--t3);text-align:center;line-height:1.7}
+.sp{width:28px;height:28px;border:2px solid var(--b2);border-top-color:var(--gn);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.prog{display:flex;flex-direction:column;gap:5px;margin-top:8px;font-size:11px;font-family:'JetBrains Mono',monospace}
+.pg{display:flex;align-items:center;gap:6px;color:var(--t3)}
+.pg.done{color:var(--gn)}.pg.act{color:var(--t2)}
+.eb{background:rgba(255,23,68,.07);border:1px solid rgba(255,23,68,.3);border-radius:7px;padding:14px 18px;text-align:center;color:var(--rd);font-size:12px;max-width:310px}
+.eb small{display:block;margin-top:6px;color:var(--t2);font-size:10px}
+.panel{width:300px;flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto;background:var(--sf)}
+.ps{border-bottom:1px solid var(--br);padding:12px}
+.pt{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+.ss{display:flex;flex-direction:column;gap:3px}
+.sr{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:5px;border:1px solid transparent}
+.sr.sb{border-color:rgba(0,230,118,.22);background:rgba(0,230,118,.05)}
+.sr.pb{border-color:rgba(0,230,118,.1);background:rgba(0,230,118,.025)}
+.sr.ss2{border-color:rgba(255,23,68,.22);background:rgba(255,23,68,.05)}
+.sr.ps2{border-color:rgba(255,23,68,.1);background:rgba(255,23,68,.025)}
+.sr.dg{border-color:rgba(255,145,0,.22);background:rgba(255,145,0,.05)}
+.sr.op{border-color:rgba(41,121,255,.22);background:rgba(41,121,255,.05)}
+.si{font-size:12px;width:16px;text-align:center}
+.sl{font-size:10px;font-weight:600;flex:1}
+.sr.sb .sl{color:var(--gn)}.sr.pb .sl{color:#69f0ae}.sr.ss2 .sl{color:var(--rd)}.sr.ps2 .sl{color:#ff6090}.sr.dg .sl{color:var(--or)}.sr.op .sl{color:var(--bl)}
+.sc{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:1px 5px;border-radius:3px;background:rgba(255,255,255,.07)}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.iv{background:var(--s2);border:1px solid var(--br);border-radius:5px;padding:6px 8px}
+.ivl{font-size:8px;color:var(--t3);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.ivn{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-top:1px}
+.ivs{font-size:8px;font-weight:600;margin-top:1px}
+.stb{background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:10px}
+.sv{font-size:11px;font-weight:700;margin-bottom:3px}
+.st{font-size:10px;color:var(--t2);line-height:1.55}
+.stg{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
+.stag{font-size:8px;font-weight:600;padding:2px 5px;border-radius:2px;background:rgba(255,255,255,.05);color:var(--t2);border:1px solid var(--b2)}
+.sl2{display:flex;flex-direction:column;gap:4px}
+.si2{background:var(--s2);border:1px solid var(--br);border-radius:5px;padding:7px 9px;transition:all .15s}
+.si2:hover{border-color:var(--b2);transform:translateX(2px)}
+.si2h{display:flex;align-items:center;gap:5px;margin-bottom:2px}
+.sit{font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.tbu{background:rgba(0,230,118,.15);color:var(--gn)}.tpb{background:rgba(0,230,118,.08);color:#69f0ae}
+.tse{background:rgba(255,23,68,.15);color:var(--rd)}.tps{background:rgba(255,23,68,.08);color:#ff6090}
+.tdg{background:rgba(255,145,0,.15);color:var(--or)}.top{background:rgba(41,121,255,.15);color:var(--bl)}
+.sid{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--t3);margin-left:auto}
+.sin{font-size:10px;font-weight:600;color:var(--t)}
+.sdesc{font-size:9px;color:var(--t2);line-height:1.5;margin-top:1px}
+.ep{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 14px;gap:8px;flex:1}
+.ep .ico{font-size:32px;opacity:.15}
+.ep .txt{font-size:10px;color:var(--t3);text-align:center;line-height:1.7}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.in{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
+.ip{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700}
+.ich{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:2px 6px;border-radius:3px}
+.up{color:var(--gn);background:rgba(0,230,118,.1)}.dn{color:var(--rd);background:rgba(255,23,68,.1)}
+.im{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t2)}
+.ak-wrap{display:flex;align-items:center;gap:5px;background:var(--sf);border:1px solid var(--br);border-radius:6px;padding:0 8px;transition:all .2s}.ak-wrap:focus-within{border-color:var(--bl);box-shadow:0 0 12px rgba(41,121,255,.2)}#ak{background:none;border:none;outline:none;color:var(--t);font-family:'JetBrains Mono',monospace;font-size:10px;width:140px;padding:7px 0}#ak::placeholder{color:var(--t3)}.ak-link{font-size:9px;color:var(--bl);white-space:nowrap;text-decoration:none;opacity:.8}.ak-link:hover{opacity:1}
 </style>
-
-<style>
-  /* 공통 페이드인 */
-  .fade-in {
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 1.7s ease, transform 1.7s ease;
-    will-change: opacity, transform;
-  }
-  .fade-in.show {
-    opacity: 1;
-    transform: none;
-  }
-</style>
-
-
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-
-
-    <meta charset="UTF-8">
-    <meta content="IE=edge" http-equiv="X-UA-Compatible">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="ko_KR">
-    <meta property="og:site_name" content="창민❤나연 웨딩">
-    <meta property="og:title" content="창민🤵 그리고 나연👰, 우리의 결혼식에 소중한 인연을 초대합니다🤍">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>창민🤵 그리고 나연👰, 우리의 결혼식에 소중한 인연을 초대합니다🤍</title>
-    <meta property="og:description" content="2025.09.20 토요일 오후 2시 | 수원 호텔리츠컨벤션웨딩 8층 빌라 드 샬롯홀">
-    <meta content="창민🤵 그리고 나연👰, 우리의 결혼식에 소중한 인연을 초대합니다🤍" name="description"/>
-    <meta property="og:image" content="images/main-background.jpeg">
-    <meta property="og:url" content="https://mylove-wedding.info">
-    <meta property="fb:app_id" content="781066922265598" />
-    <meta property="fb:admins" content="cmkkkk"/>
-    <link href="images/favicon/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
-    <link href="images/favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
-    <link href="images/favicon/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
-    <link href="https://fonts.googleapis.com/css?family=Dosis:400,500" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Great+Vibes" rel="stylesheet">
-    <link href="css/ekko-lightbox.css" rel="stylesheet">
-    <link href="styles/main.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Gamja+Flower|Gugi|Noto+Serif+KR|Stylish|Sunflower:300"
-          rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-2.2.1.js"></script>
-
-
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        function findGetParameter(parameterName) {
-            var result = null,
-                tmp = [];
-            location.search
-                .substr(1)
-                .split("&")
-                .forEach(function (item) {
-                  tmp = item.split("=");
-                  if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-                });
-            return result;
-        }
-
-        $(document).ready(function () {
-
-            function getText(){
-                var result = null;
-                $.ajax( { url: "https://raw.githubusercontent.com/AndersonChoi/wedding-card/master/README.md",
-                        type: 'get',
-                        dataType: 'html',
-                        async: false,
-                        success: function(data) { result = data; }
-                    }
-                );
-                FileReady = true;
-                return result;
-            }
-            var markdown_source = getText();
-            var comment_contents = markdown_source.split("축하의 말")[1];
-
-            var md = new Remarkable();
-            $("#comments").append(md.render(comment_contents));
-
-            
-            if(findGetParameter('gift')=='false'){
-                $('#gifts').hide();
-            }
-        });
-
-
-
-
-    </script>
-
-<style>
-  /* 로딩 중: 스크롤/상호작용 차단 + 본문/페이드 요소 완전 숨김 */
-  html[data-loading="1"] body { overflow: hidden; height: 100vh; overscroll-behavior: none; }
-  html[data-loading="1"] #pageContent {
-    opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(8px);
-  }
-  html[data-loading="1"] .fade-in { opacity: 0 !important; transform: translateY(8px) !important; }
-  #loadingOverlay { pointer-events: all; touch-action: none; } /* 오버레이가 이벤트 먹도록 */
-
-  /* 로딩 해제 후: 자연스런 페이드인 */
-  html:not([data-loading="1"]) #pageContent {
-    opacity: 1; visibility: visible; transform: none;
-    transition: opacity .6s ease, transform .6s ease;
-  }
-  html:not([data-loading="1"]) .fade-in.show {
-    opacity: 1; transform: none;
-  }
-
-  :root{
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-/* iOS 주소창 높이 문제 대응 */
-#loadingOverlay{
-  height: 100vh;
-  padding-top: calc(12px + var(--safe-top));
-  padding-bottom: calc(12px + var(--safe-bottom));
-}
-@supports (height: 100dvh){
-  #loadingOverlay{ height: 100dvh; }
-}
-
-/* 로딩 중 아이폰 바운스/튕김 방지 */
-html[data-loading="1"] body{
-  position: fixed; inset: 0; width: 100%;
-  overscroll-behavior: none;
-}
-
-/* 음악 컨트롤이 노치/상단바에 가리지 않도록 */
-.music-top{
-  top: calc(12px + var(--safe-top));
-}
-
-/* 터치 하이라이트/텍스트 드래그 최소화 */
-a, button { -webkit-tap-highlight-color: rgba(0,0,0,.08); }
-* { -webkit-touch-callout: none; }
-
-/* 이미지/아이프레임 반응형 보장 */
-img, iframe { max-width: 100%; height: auto; }
-
-/* 480px 이하(휴대폰) 최적화 */
-@media (max-width: 480px){
-  .ww-couple-name { font-size: 2.2em !important; }
-  .music-top{ gap: 8px; padding: 6px 10px; }
-  .volume-slider{ width: 60px; } /* 기본 30px → 모바일에서 조금 넉넉히 */
-  .gift-grid{ gap: 16px; }
-  .gift-card{ flex-basis: 100%; }
-  .map-icon{ width: 52px; height: auto; } /* 터치 타겟 유지 */
-}
-
-/* 360px 이하(아주 작은 기기) */
-@media (max-width: 360px){
-  .volume-slider{ width: 48px; }
-  .music-btn{ width: 32px; height: 32px; font-size: 12px; }
-}
-
-.ww-wedding-announcement {
-  position: relative; /* 기준 부모 */
-}
-
-.hero-sub {
-  position: absolute;
-  top: 10%; /* 사진 상단에서 5% (원하면 3%~10%로 조절) */
-  left: 50%;
-  transform: translateX(-50%);
-  display: inline-block;   /* 문구 길이만큼만 박스 차지 */
-  text-align: center;
-  color: #fff;
-  margin: 0;
-  z-index: 3;
-  white-space: nowrap;
-}
-
-.ww-announcement-container {
-  margin-top: 10em;   /* 글자 크기 기준 3줄 정도 아래로 */
-}
-
-
-</style>
-
-
 </head>
-
-<body id="top" class="no-scroll">
-
-<!-- 로딩 오버레이 -->
-<div id="loadingOverlay" aria-label="Loading">
-  <div class="load-text" id="loadingText"></div>
-</div>
-
-<!-- 본문 래퍼: 기존 index.html의 모든 본문을 이 안에 넣기 -->
-<div id="pageContent">
-
-<header></header>
-<div id="fb-root"></div>
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/ko_KR/sdk.js#xfbml=1&version=v3.2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
-<div class="page-content">
-    <div class="div" style="background-color: #ffffff;">
-        <div class="ww-home-page ww-title" id="home">
-        </div>
-        <div class="ww-nav-bar fixed-top bg-light">
-            <nav class="navbar navbar-expand-lg navbar-light">
-                <div class="container">
-                    <!-- 항상 보이는 사운드 컨트롤 (데스크톱 + 모바일 동일) -->
-                  <div class="navbar-sound d-flex align-items-center ms-auto">
-                      <button id="playPause" class="sound-btn" aria-label="재생/일시정지">
-                        <img src="images/icon/speaker.png" alt="재생" width="22" height="22">
-                      </button>
-                  </div>
-                    <button class="navbar-toggler" type="button"
-                            data-bs-toggle="collapse" data-bs-target="#ww-navbarNav"
-                            aria-controls="ww-navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                      <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse text-uppercase" id="ww-navbarNav">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item"><a class="nav-link smooth-scroll" href="#invite">소개</a></li>
-                            <li class="nav-item"><a class="nav-link smooth-scroll" href="#gallery">사진</a></li>
-                            <li class="nav-item"><a class="nav-link smooth-scroll" href="#map">오시는 길</a></li>
-                            <li class="nav-item"><a class="nav-link smooth-scroll" href="#account">계좌번호</a></li>
-                        </ul>
-                    </div>
-                
-</div>
-            </nav>
-        </div>
-        <hr class="green-divider">
-        <!-- ===== INVITATION + 연락 모달 ===== -->
-        <section class="invite fade-in" id="invite">
-          <h2 class="h1 text-center pb-3 ww-title fade-in" style="font-size:1.3rem; font-weight:bold; font-family: 'Noto Serif KR',serif;"><span class="ico"><img src="images/icon/heart.png" alt="클로버" width="30" height="30" style="margin-top:-3px"></span><b> 우리의 결혼식에 초대합니다</b></h2>
-          <h3 class="invite-sub fade-in" style= "margin-top:30px;">INVITATION</h3>
-          <div class="invite-text fade-in">
-            오랜 인연이 깊은 사랑이 되어,<br>
-            이제 같은 길을 걸어가려 합니다.<br><br>
-            저희의 행복한 시작에 함께해 주신다면,<br>
-            더없이 기쁨이 될 것입니다.<br>
-            소중한 시간을 내어 축복해 주시면,<br>
-            진심으로 감사드리겠습니다.
-          </div>
-
-          <div class="invite-names fade-in">
-            <div style="display:flex; justify-content:center; gap:25px; text-align:center; font-family: 'Noto Serif KR', serif; font-size:0.8em;">
-              <!-- 신랑측 -->
-              <div style="display:flex; align-items:center; gap:7px;">
-                <div style="text-align:right; line-height:1.6;">
-                  김종길<br>
-                  김순화
-                </div>
-                <div>의 아들 <b style="font-size:1.4em; margin-left:3px">창&nbsp;민</b></div>
-              </div>
-            
-              <!-- 신부측 -->
-              <div style="display:flex; align-items:center; gap:7px;">
-                <div style="text-align:right; line-height:1.6">
-                  김정태<br>
-                  박남희
-                </div>
-                <div>의 딸 <b style="font-size:1.4em; margin-left:3px">나&nbsp;연</b></div>
-              </div>
-            
-            </div>            
-          </div>
-
-          <!-- 열기 버튼에 data-open으로 타깃 지정 -->
-          <button class="text-center invite-btn mt-3" type="button" data-open="#contactModal" id="openContact">
-            <span class="ico"><img src="images/icon/tel.png" alt="" width="16" height="16" style="margin-top:-5px"></span>
-            전화로 축하 인사하기
-          </button>
-        </section>
-
-        <!-- 모달 -->
-        <div id="contactModal" class="contact-modal" aria-hidden="true" role="dialog" aria-labelledby="contactTitle" >
-          <div class="contact-backdrop" data-close></div>
-          <div class="contact-panel" role="document">
-            <button class="contact-close" aria-label="닫기" data-close>✕</button>
-
-            <div class="contact-group fade-in">
-              <h4 id="contactTitle" class="contact-head groom fade-in"><img src="images/icon/tel.png" alt="전화" width="20" height="20" style="margin-top:-5px"> 신랑측</h4>
-              <hr>
-              <div class="contact-row fade-in">
-                <div class="who fade-in"><span class="role">신랑</span> <b>김창민</b></div>
-                <div class="acts">
-                  <a class="act" href="tel:010-3523-7831" aria-label="신랑에게 전화"><img src="images/icon/tel.png" alt="전화" width="14" height="14" style="margin-top:-5px"></a>
-                  <a class="act" href="sms:010-3523-7831" aria-label="신랑에게 문자"><img src="images/icon/mes.png" alt="문자" width="14" height="14" style="margin-top:-5px"></a>
-                </div>
-              </div>
-              <div class="contact-row fade-in">
-                <div class="who fade-in"><span class="role">혼주</span> <b>김종길</b></div>
-                <div class="acts">
-                  <a class="act" href="tel:010-8212-7151" aria-label="혼주에게 전화"><img src="images/icon/tel.png" alt="전화" width="14" height="14" style="margin-top:-5px"></a>
-                  <a class="act" href="sms:010-8212-7151" aria-label="혼주에게 문자"><img src="images/icon/mes.png" alt="문자" width="14" height="14" style="margin-top:-5px"></a>
-                </div>
-              </div>
-              <div class="contact-row fade-in">
-                <div class="who fade-in"><span class="role">혼주</span> <b>김순화</b></div>
-                <div class="acts">
-                  <a class="act" href="tel:010-6730-7831" aria-label="혼주에게 전화"><img src="images/icon/tel.png" alt="전화" width="14" height="14" style="margin-top:-5px"></a>
-                  <a class="act" href="sms:010-6730-7831" aria-label="혼주에게 문자"><img src="images/icon/mes.png" alt="문자" width="14" height="14" style="margin-top:-5px"></a>
-                </div>
-              </div>
-            </div>
-
-            <div class="contact-group fade-in">
-              <h4 class="contact-head bride fade-in"><img src="images/icon/tel.png" alt="전화" width="20" height="20" style="margin-top:-5px"> 신부측</h4>
-              <hr class="sep">
-              <div class="contact-row fade-in">
-                <div class="who fade-in"><span class="role">신부</span> <b>김나연</b></div>
-                <div class="acts">
-                  <a class="act" href="tel:010-6646-9601" aria-label="신부에게 전화"><img src="images/icon/tel.png" alt="전화" width="14" height="14"></a>
-                  <a class="act" href="sms:010-6646-9601" aria-label="신부에게 문자"><img src="images/icon/mes.png" alt="문자" width="14" height="14"></a>
-                </div>
-              </div>
-              <div class="contact-row fade-in">
-                <div class="who fade-in"><span class="role">혼주</span> <b>김정태</b></div>
-                <div class="acts">
-                  <a class="act" href="tel:010-6656-9601" aria-label="혼주에게 전화"><img src="images/icon/tel.png" alt="전화" width="14" height="14"></a>
-                  <a class="act" href="sms:010-6656-9601" aria-label="혼주에게 문자"><img src="images/icon/mes.png" alt="문자" width="14" height="14"></a>
-                </div>
-              </div>
-              <div class="contact-row fade-in">
-                <div class="who fade-in"><span class="role">혼주</span> <b>박남희</b></div>
-                <div class="acts">
-                  <a class="act" href="tel:010-3579-9061" aria-label="혼주에게 전화"><img src="images/icon/tel.png" alt="전화" width="14" height="14"></a>
-                  <a class="act" href="sms:010-3579-9061" aria-label="혼주에게 문자"><img src="images/icon/mes.png" alt="문자" width="14" height="14"></a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <style>
-        /* 레이아웃/타이포 */
-        .invite{ text-align:center; padding:40px 16px; background-color: #ffffff;}
-        .invite-sub{ letter-spacing:.3em; color:#ffb9c7; margin-bottom:24px; font-weight:600; font-size:1em }
-        .invite-text{ color:#444; line-height:2; margin:0 auto 28px; max-width:560px; }
-        .invite-names{ color:#2c2c2c; line-height:2.4; margin:28px 0 22px; }
-        .invite-btn{
-          display:inline-flex; align-items:center; gap:8px;
-          background:#fff; color:#2c2c2c; border:1px solid #d8d8d8;
-          padding:14px 18px; border-radius:12px; cursor:pointer;
-          box-shadow:0 4px 14px rgba(0,0,0,.06);
-        }
-        .invite-btn:hover{ color:  #808074;
-          text-decoration: underline;
-          background-color: transparent;
-          border-color: transparent;}
-        .invite-btn .ico{ font-size:1.1em }
-
-        /* 모달 베이스 */
-        .contact-modal{ position:fixed; inset:0; display:none; z-index:9999; }
-        .contact-modal[aria-hidden="false"]{ display:block; }
-        .contact-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.72); }
-        
-        .contact-close{
-          position:absolute; top:10px; right:10px;
-          width:36px; height:36px; border:none; border-radius:50%;
-          background:transparent; font-size:20px; cursor:pointer; color:#333;
-        }
-        .contact-head{ margin:6px 0 8px; font-weight:700; }
-        .contact-head.groom{ color:#6a8a72; }
-        .contact-head.bride{ color:#b07a5f; }
-        .sep{ border:none; border-top:1px solid #eadfd8; margin:18px 0 6px; }
-
-        .contact-group + .contact-group{ margin-top:26px; }
-        .contact-row{
-          display:flex; justify-content:space-between; align-items:center;
-          padding:14px 4px;
-        }
-        .role{ color:#6b6b6b; margin-right:8px; }
-        .acts{ display:flex; gap:14px; }
-        .act{
-          font-size:22px; text-decoration:none; line-height:1;
-          color:#4b5a67; padding:6px; border-radius:8px; border:1px solid transparent;
-        }
-        .act:hover{ background:#f2f6f9; border-color:#e6eef3; }
-
-        @media (max-width: 560px){
-          .contact-panel{ inset:32px 12px auto 12px; padding:18px; }
-          .contact-row{ padding:12px 2px; }
-        }
-
-        body.modal-open { overflow: hidden; }
-
-        /* 모달 레이어를 최상단으로 */
-        .contact-modal{ position:fixed; inset:0; z-index:2147483647; display:none; }
-        .contact-modal[aria-hidden="false"]{ display:block; }
-
-        /* 레이어 안에서의 쌓임 순서 지정 */
-        .contact-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.72); z-index:1; }
-        .contact-close{ position:absolute; top:10px; right:10px; z-index:3; }
-
-        /* 본문이 transform 되는 동안에도 모달은 영향 안 받게 */
-        body.modal-open { overflow:hidden; }
-
-        /* 모달 베이스 */
-.contact-modal{
-  position: fixed; inset: 0; z-index: 9999;
-  display: none;
-  /* iOS에서 뷰포트 기준 스크롤 안정화 */
-  height: 100vh;
-}
-@supports (height: 100dvh){
-  .contact-modal{ height: 100dvh; }
-}
-.contact-modal[aria-hidden="false"]{ display:block; }
-
-/* 배경 어둡게 하지 않음(완전 투명) */
-.contact-backdrop{
-  position: absolute; inset: 0;
-  background: transparent;          /* <- 투명 처리 */
-}
-
-/* 패널은 고정 위치 + 안전영역 고려 + 내부 스크롤 */
-:root{
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-/* 닫기 버튼 동일 */
-.contact-close{
-  position:absolute; top:10px; right:10px;
-  width:36px; height:36px; border:none; border-radius:50%;
-  background:transparent; font-size:20px; cursor:pointer; color:#333;
-}
-
-/* 모바일 살짝 여백 축소 */
-@media (max-width: 560px){
-  .contact-panel{ padding:18px; }
-}
-
-/* 전체 레이어는 고정, 높이 고정 */
-.contact-modal{
-  position: fixed; inset: 0; z-index: 2147483647; display: none;
-  overflow: hidden;           /* 바깥(배경)은 스크롤 X */
-  height: 100vh;
-}
-@supports (height: 100dvh){
-  .contact-modal{ height: 100dvh; }
-}
-.contact-modal[aria-hidden="false"]{ display:block; }
-
-/* 패널만 스크롤 */
-:root{
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-}
-/* 딱 1번만 선언! */
-.contact-panel{
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(92vw, 360px);
-  max-height: calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 32px);
-  overflow: auto; -webkit-overflow-scrolling: touch;
-  background:#fff; border-radius:12px; padding:24px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.15);
-
-  /* 여기만 바꾸면 끝! */
-  top: var(--modal-top, calc(16px + env(safe-area-inset-top,0px)));
-}
-
-/* ===== [iOS PATCH] Overlay/Viewport/Safe-Area ===== */
-:root{ --vh: 1vh; } /* JS가 실제 값으로 갱신 */
-
-.contact-modal{
-  /* 오버레이 자체를 스크롤 컨테이너로 */
-  overflow: auto !important;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  touch-action: pan-y;
-  height: 100vh;                 /* 기본 */
-  height: calc(var(--vh) * 100); /* iOS 보정 */
-}
-@supports (height: 100svh){
-  .contact-modal{ height: 100svh; }  /* 최신 사파리 */
-}
-
-/* 모달 열려있을 때 본문 트랜스폼 영향 제거(사파리 fixed 버그 회피) */
-.modal-open #pageContent{ transform: none !important; }
-
-/* 패널은 내부 스크롤만 유지 */
-.contact-panel{
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(92vw, 360px);
-  max-height: calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 32px);
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  top: var(--modal-top, calc(16px + env(safe-area-inset-top,0px)));
-  box-shadow: 0 20px 60px rgba(0,0,0,.15);
-  background:#fff; border-radius:12px; padding:24px;
-  z-index: 2;
-}
-
-/* 배경 클릭 닫기 영역은 패널 뒤 */
-.contact-backdrop{
-  position:absolute; inset:0; background: transparent; z-index:1;
-}
-
-/* 아주 작을 때 버튼 누르기 쉽게 */
-@media (max-width:560px){
-  .contact-panel{ padding:18px; }
-}
-
-        </style>
-
-        <script>
-          // 모달 열고 닫을 때만 쓰는 바디 락/언락
-
-            /* ===== [iOS PATCH] 정확한 100vh 보정 ===== */
-            (function(){
-              const root = document.documentElement;
-              function setVH(){
-                const h = (window.visualViewport?.height || window.innerHeight) * 0.01;
-                root.style.setProperty('--vh', h + 'px');
-              }
-              setVH();
-              window.addEventListener('resize', setVH);
-              if (window.visualViewport){
-                visualViewport.addEventListener('resize', setVH);
-                visualViewport.addEventListener('scroll', setVH);
-              }
-            })();
-            
-            /* ===== [iOS PATCH] 모달을 body 직속으로 옮겨 transform 버그 회피 ===== */
-            document.addEventListener('DOMContentLoaded', () => {
-              const m = document.getElementById('contactModal');
-              if (m && m.parentNode !== document.body) document.body.appendChild(m);
-            });
-            
-            /* ===== [iOS PATCH] 열기/닫기 유틸 + 오버레이 스크롤 보정 ===== */
-            let _scrollY = 0;
-            function lockBody(){
-              _scrollY = window.scrollY || window.pageYOffset;
-              document.body.style.position = 'fixed';
-              document.body.style.top = `-${_scrollY}px`;
-              document.body.style.left = '0';
-              document.body.style.right = '0';
-              document.body.style.width = '100%';
-              document.body.classList.add('modal-open');
-            }
-            function unlockBody(){
-              document.body.style.position = '';
-              document.body.style.top = '';
-              document.body.style.left = '';
-              document.body.style.right = '';
-              document.body.style.width = '';
-              document.body.classList.remove('modal-open');
-              window.scrollTo(0, _scrollY);
-            }
-            
-            function openModalBySelector(sel){
-              const modal = document.querySelector(sel);
-              if (!modal) return;
-              modal.setAttribute('aria-hidden', 'false');
-              lockBody();
-              // 큰 --modal-top 값도 보이게: 오버레이를 그 위치까지 스크롤
-              const panel = modal.querySelector('.contact-panel');
-              if (panel){
-                // 현재 패널의 화면 내 위쪽 거리만큼 오버레이 스크롤 올림
-                requestAnimationFrame(() => {
-                  const rect = panel.getBoundingClientRect();
-                  modal.scrollTop += Math.max(0, rect.top - 16);
-                });
-              }
-            }
-            
-            function closeCurrentModal(){
-              document.querySelectorAll('.contact-modal[aria-hidden="false"]').forEach(m=>{
-                m.setAttribute('aria-hidden','true');
-              });
-              unlockBody();
-            }
-            
-            /* 기존 열기 리스너 대체 (data-open 유지) */
-            document.addEventListener('click', (e)=>{
-              const opener = e.target.closest('[data-open]');
-              if (!opener) return;
-              e.preventDefault();
-              openModalBySelector(opener.getAttribute('data-open'));
-            }, {passive:false});
-            
-            /* ✕/배경 닫기 */
-            document.addEventListener('click', (e)=>{
-              const closer = e.target.closest('[data-close]');
-              if (closer){
-                const modal = closer.closest('.contact-modal');
-                if (modal) { modal.setAttribute('aria-hidden','true'); unlockBody(); }
-                return;
-              }
-              // 배경 클릭으로 닫기: 패널 바깥을 눌렀을 때만
-              const modal = document.querySelector('.contact-modal[aria-hidden="false"]');
-              if (!modal) return;
-              const panel = modal.querySelector('.contact-panel');
-              if (modal.contains(e.target) && panel && !panel.contains(e.target)){
-                modal.setAttribute('aria-hidden','true'); unlockBody();
-              }
-            }, {passive:true});
-            
-            /* ESC 닫기 */
-            document.addEventListener('keydown', (e)=>{
-              if (e.key === 'Escape') closeCurrentModal();
-            });
-            
-            /* ===== [iOS PATCH] 키보드 올라올 때 패널 가려짐 방지 ===== */
-            (function(){
-              const modal = document.getElementById('contactModal');
-              if (!modal || !window.visualViewport) return;
-              const vv = window.visualViewport;
-              const panel = modal.querySelector('.contact-panel');
-            
-              function keepPanelVisible(){
-                if (!panel || modal.getAttribute('aria-hidden') === 'true') return;
-                const margin = 12;
-                const rect = panel.getBoundingClientRect();
-                // 패널 하단이 가려지면 오버레이를 더 내려서 보이게
-                const overflow = (rect.bottom + margin) - vv.height;
-                if (overflow > 0){
-                  modal.scrollTop += overflow;
-                }
-              }
-            
-              vv.addEventListener('resize', keepPanelVisible);
-              vv.addEventListener('scroll', keepPanelVisible);
-            })();
-
-          </script>
-          
-          <hr class="green-divider">
-
-          <!-- 달력 넣을 위치에 그대로 붙여넣기 -->
-        <section class="calendar-wrap fade-in">
-          <div class="cal-top fade-in">
-            <div class="cal-kicker fade-in">WEDDING DAY</div>
-            <div class="cal-date fade-in" style="font-family: 'Noto Serif KR'; font-weight:bold; margin-top:10px">2025.09.20. 토요일 오후 2:00</div>
-            <h6 style="font-family: 'Noto Serif KR', serif; text-align:center; margin-top:10px">
-              <!-- ...existing code... -->
-              <span class="fade-in" id="countdown" style="font-weight:bold; color:#868273; font-size: 0.8em;;"></span>
-              <script>
-              // 2025년 9월 20일 14시를 목표로 카운트다운
-              function updateCountdown() {
-                  var target = new Date("2025-09-20T14:00:00");
-                  var now = new Date();
-                  var diff = target - now;
-              
-                  if (diff <= 0) {
-                      document.getElementById('countdown').textContent = "축하합니다! 결혼식이 시작되었습니다!";
-                      return;
-                  }
-              
-                  var days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                  var hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                  var minutes = Math.floor((diff / (1000 * 60)) % 60);
-                  var seconds = Math.floor((diff / 1000) % 60);
-                  
-                  // 두 자리수로 맞추기
-                  function pad(n) { return n < 10 ? '0' + n : n; }
-              
-                  document.getElementById('countdown').textContent =
-                      "결혼식까지 " + days + "일 " + pad(hours) + " : " + pad(minutes) + " : " + pad(seconds) + " 남았습니다";
-              }
-              updateCountdown();
-              setInterval(updateCountdown, 1000);
-              </script>
-              <!-- ...existing code... -->
-              <br>
-            </h6>
-          </div>
-
-          <div id="weddingCal" class="cal" style="margin-top:20px;"></div>
-
-          </a>
-        </section>
-
-
-        <script>
-        /**
-        * 단월 달력 만들기
-        * year, month(1~12), day를 지정하면 해당 월을 그리고 day를 강조
-        */
-        (function buildWeddingCalendar(){
-          const year  = 2025;
-          const month = 9;     // 1~12
-          const dday  = 20;    // 강조할 날짜
-
-          const $cal = document.getElementById('weddingCal');
-          const first = new Date(year, month-1, 1);
-          const startDow = first.getDay(); // 0=일~6=토
-          const daysInMonth = new Date(year, month, 0).getDate();
-
-          // 요일 머리글 (S M T W T F S 스타일)
-          const dows = ['S','M','T','W','T','F','S'];
-          dows.forEach((t,i)=>{
-            const el = document.createElement('div');
-            el.textContent = t;
-            el.className = 'dow' + (i===0 ? ' su' : '');
-            $cal.appendChild(el);
-          });
-
-          // 앞쪽 빈칸: 이전달 날짜는 흐리게 표시하려면 여기서 계산 가능
-          for (let i=0;i<startDow;i++){
-            const el = document.createElement('div');
-            el.className = 'day muted';
-            el.textContent = ''; // 완전 빈칸
-            $cal.appendChild(el);
-          }
-
-          // 이번달 날짜
-          for (let d=1; d<=daysInMonth; d++){
-            const el = document.createElement('div');
-            const dow = (startDow + d - 1) % 7; // 요일
-            el.className = 'day' + (dow===0 ? ' su' : '') + (d===dday ? ' dday' : '');
-            el.textContent = d;
-            $cal.appendChild(el);
-          }
-        })();
-        </script>
-
-
-
-        </div>
-        <div class="ww-section" id="gallery">
-          <hr class="green-divider">
-            <div class="ww-photo-gallery">
-                <div class="container">
-                    <br>
-                    <h2 class="h1 text-center pb-3 ww-title fade-in" style="font-size:1.5rem; font-weight:bold; font-family: 'Noto Serif KR',serif"><span class="ico"><img src="images/icon/heart.png" alt="클로버" width="30" height="30"></span><b> 포토 갤러리</b></h2>                    
-                    <div class="ww-gallery">
-
-                            
-                            
-                            <!-- 갤러리 카드들 -->
-                        <div class="card-columns mt-4 fade-in"></div>
-                        <div class="card-columns fade-in">
-                            <div class="card" data-groups="[&quot;party&quot;,&quot;wedding&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 2" class="img-fluid" src="images/pic2.jpeg"/>
-                                </a>
-                            </div>
-                            <div class="card" data-groups="[&quot;vacation&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 3" class="img-fluid" src="images/pic7.jpeg"/>
-                                </a>
-                            </div>
-                            <div class="card" data-groups="[&quot;party&quot;,&quot;vacation&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 4" class="img-fluid" src="images/pic6.jpeg"/>
-                                </a>
-                            </div>
-                            <div class="card" data-groups="[&quot;vacation&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 5" class="img-fluid" src="images/pic4.jpeg"/>
-                                </a>
-                            </div>
-                            <div class="cardn"
-                                 data-groups="[&quot;wedding&quot;,&quot;ceremony&quot;,&quot;party&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 6" class="img-fluid" src="images/pic3.jpeg"/>
-                                </a>
-                            </div>
-                            <div class="card" data-groups="[&quot;vacation&quot;]">
-                                <a data-gallery="ww-gallery" data-toggle="lightbox">
-                                    <img alt="Gallery Pic 7" class="img-fluid" src="images/pic9.jpeg"/>
-                                </a>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    <!-- 선택: 전체 보기 버튼 -->
-                     <br>
-              <div class="text-center fade-in">
-                <a href="gallery.html" class="invite-btn gallery-btn">
-                  <span class="icon">
-                    <img src="images/icon/gallery.png" alt="갤러리" class="icon-img">
-                  </span>
-                  전체 갤러리 보기
-                </a>
-              </div>
-                </div>
-            </div>
-        </div>
-        <div class="ww-section fade-in" id="map" style="transition-delay: 240ms;">
-            <div class="container fade-in">
-              <hr class="green-divider">
-                    <br>
-                    <h2 class="h1 text-center pb-3 ww-title fade-in" style="font-size:1.5rem; font-weight:bold; font-family: 'Noto Serif KR',serif"><span class="ico"><img src="images/icon/heart.png" alt="클로버" width="30" height="30" style="margin-top:-3px"></span><b> 오시는 길</b></h2>
-                        <h5 style="font-family: 'Noto Serif KR', serif; font-size:1rem; font-weight:600; text-align:center;">호텔리츠컨벤션웨딩 8층 빌라 드 샬롯홀</h5>
-                        <h6 style="font-family: 'Noto Serif KR', serif; text-align:center">(경기 수원시 팔달구 권광로134번길 46)</h6>
-                <div class="form-group fade-in">
-                    <div class="col-md-12 fade-in">
-                        <div class="my-3 text-center fade-in">
-                            <a href="https://naver.me/xcnaMlVU">
-                                <img alt="naver-map" class="map-icon fade-in" id="naver-map" src="images/map/naver-map.png">
-                            </a>
-                            <a href="https://kko.kakao.com/q0GMsfThN7">
-                                <img alt="kakao-map" class="map-icon fade-in" id="kakao-map" src="images/map/kakao-map.png">
-                            </a>
-                            <a href="https://maps.app.goo.gl/uWFYAzfjKz6hYebE7">
-                                <img alt="google-map" class="map-icon fade-in" id="google-map" src="images/map/google-map.png">
-                            </a>
-                        </div>
-                        <div class="fade-in">
-                          <img src="images/map/map1.png" alt="지도" width=contain>
-                          <!-- 갈색 구분선 -->
-                          <hr class="brown-divider">
-                          <img src="images/map/map2.png" alt="지도" width=contain>
-                          <!--iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3385.2785074011836!2d127.03078603758975!3d37.258632187871406!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357b436743e39b9f%3A0x2b780a971545dd3!2z7Zi47YWU66as7Lig7Luo67Kk7IWY7Juo65Sp!5e0!3m2!1sko!2skr!4v1754926689254!5m2!1sko!2skr" width="100%" height="400" frameborder="0" style="border:0" allowfullscreen=""></iframe-->
-                        </div>
-                      </div>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
-        </div>
-
-        <!-- 마음 전하실 곳 -->
-        <section id="account" class="gift-section fade-in" style="text-align:center">
-          <hr class="green-divider">
-            <img src="images/icon/doubleheart.png" alt="하트" width="30" height="30">
-        <br>
-        <h2 class="gift-title fade-in" style="font-size:1.5rem; font-weight:bold; font-family: 'Noto Serif KR',serif"><span class="ico"><b> 마음 전하실 곳</b></span></h2>
-        <p class="gift-desc fade-in" style="font-size:0.8rem; text-align:center;letter-spacing:-0.05em">필요하신 분들을 위해 안내드립니다. <br> 참석이 어려우셔도 축복해주시는 그 마음 깊이 감사드립니다.</p>
-
-        <div class="gift-grid fade-in">
-            <!-- 신랑측 -->
-            <article class="gift-card groom fade-in">
-            <button class="gift-head fade-in" aria-expanded="false">
-                <span class="head-left fade-in">
-                  <img src="images/icon/leaf.png" alt="나뭇잎" width=14 height=14>
-                  <span class="head-title fade-in">신랑측</span>
-                </span>
-                <span class="chev fade-in"></span>
-            </button>
-
-            <div class="gift-body fade-in">
-                <!-- 항목 -->
-                <div class="gift-row fade-in">
-                <div class="gift-info fade-in">
-                    <div class="who"><b>신랑 김창민</b></div>
-                    <div class="bank" style="transition-delay: 240ms; left: -16px; top: -44px;">토스뱅크 <span class="acct">1000-2198-4655</span></div>
-                </div>
-                <div class="gift-actions">
-                    <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej7ps3prE" target="_blank" rel="noopener" style="font-size:0.8em"><img src="images/icon/chat.png" alt="카카오" width=10 height=10 style="margin-top:-3px">
-                      카카오페이 송금</a-->
-                    <button class="btn ghost" data-copy="1000-2198-4655" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
-                </div>
-                </div>
-
-                <div class="divider fade-in"></div>
-
-                <div class="gift-row fade-in">
-                <div class="gift-info fade-in">
-                    <div class="who"><b>혼주 김종길</b></div>
-                    <div class="bank">국민은행 <span class="acct">284001-04-164529</span></div>
-                </div>
-                <div class="gift-actions">
-                    <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej7ps3prE" target="_blank" rel="noopener">카카오페이 송금</a-->
-                    <button class="btn ghost" data-copy="284001-04-164529" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
-                </div>
-                </div>
-
-                <div class="divider fade-in"></div>
-
-                <div class="gift-row fade-in">
-                <div class="gift-info fade-in">
-                    <div class="who"><b>혼주 김순화</b></div>
-                    <div class="bank">우리은행 <span class="acct">477-08-018573</span></div>
-                </div>
-                <div class="gift-actions">
-                    <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej7ps3prE" target="_blank" rel="noopener">카카오페이 송금</a-->
-                    <button class="btn ghost" data-copy="477-08-018573" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px">  복사</button>
-                </div>
-                </div>
-            </div>
-            </article>
-
-            <br>
-
-            <!-- 신부측 -->
-            <article class="gift-card bride fade-in">
-            <button class="gift-head fade-in" aria-expanded="false">
-                <span class="head-left fade-in">
-                  <img src="images/icon/leaf.png" alt="나뭇잎" width=14 height=14>
-                  <span class="head-title fade-in">신부측</span>
-                </span>
-                <span class="chev fade-in"></span>
-            </button>
-
-            <div class="gift-body fade-in">
-                <div class="gift-row fade-in">
-                  <div class="gift-info fade-in">
-                      <div class="who"><b>신부 김나연</b></div>
-                      <div class="bank" style="transition-delay: 240ms; left: -16px; top: -44px;">카카오뱅크 <span class="acct">3333-03-8624607</span></div>
-                  </div>
-                  <div class="gift-actions">
-                      <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/Ej8tLCSV3" target="_blank" rel="noopener" style="font-size:0.8em"><img src="images/icon/chat.png" alt="카카오" width=10 height=10 style="margin-top:-3px">
-                        카카오페이 송금</a-->
-                        <button class="btn ghost" data-copy="3333-03-8624607" style="font-size:0.8em"><img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
-                  </div>
-                </div>
-
-                <div class="divider fade-in"></div>
-
-                <div class="gift-row fade-in">
-                <div class="gift-info fade-in">
-                    <div class="who"><b>혼주 김정태</b></div>
-                    <div class="bank">우리은행 <span class="acct">1002-559-748147</span></div>
-                </div>
-                <div class="gift-actions">
-                    <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/예시" target="_blank" rel="noopener">카카오페이 송금</a-->
-                    <button class="btn ghost" data-copy="1002-559-748147" style="font-size:0.8em"> <img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
-                </div>
-                </div>
-
-                
-                <div class="divider fade-in"></div>
-                <div class="gift-row fade-in">
-                <div class="gift-info fade-in">
-                    <div class="who"><b>혼주 박남희</b></div>
-                    <div class="bank">국민은행 <span class="acct">240-24-0175-570</span></div>
-                </div>
-                <div class="gift-actions">
-                    <!--a class="btn pay fade-in" href="https://qr.kakaopay.com/예시" target="_blank" rel="noopener">카카오페이 송금</a-->
-                    <button class="btn ghost" data-copy="240-24-0175-570" style="font-size:0.8em"> <img src="images/icon/copy.png" alt="복사" width=10 height=10 style="margin-top:-3px"> 복사</button>
-                </div>
-                </div>
-            </div>
-            </article>
-        </div>
-
-        <div id="copyToast" class="copy-toast" role="status" aria-live="polite">복사되었습니다</div>
-        </section>
-
-        <style>
-        :root{
-        --sage:#e7eadf;        /* 신랑측 헤더 */
-        --sage-ink:#5a6b56;
-        --blush:#efe1dc;       /* 신부측 헤더 */
-        --blush-ink:#845d54;
-        --line:#e9e9e9;
-        --ink:#2b2b2b;
-        --sub:#6f6f6f;
-        --pay:#ffe000;         /* 카카오페이 노랑 */
-        }
-
-        .gift-section{padding:48px 16px; background:#ffffff}
-        .gift-title{font-family:'Noto Serif KR',serif; text-align:center; margin:0 0 10px}
-        .gift-desc{color:var(--sub); text-align:center; margin:0 0 28px; line-height:1.7}
-
-        .gift-grid{gap:24px; max-width:1000px; margin:0 auto; flex-wrap:wrap; align-items:flex-start}
-        .gift-card{align-items:center; flex:400px; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fff; box-shadow:0 6px 16px rgba(0,0,0,.04)}
-
-        .gift-head{width:100%; display:flex; justify-content:space-between; align-items:center; gap:8px;
-        padding:14px 16px; border:none; cursor:pointer; background:var(--sage); color:var(--sage-ink); font-weight:700}
-        .gift-card.bride .gift-head{background:var(--blush); color:var(--blush-ink)}
-
-        .head-left{display:flex; align-items:center; gap:10px}
-        .leaf{opacity:.8}
-        .head-title{font-family:'Noto Serif KR',serif}
-
-        .chev{width:18px; height:18px; border-right:2px solid currentColor; border-bottom:2px solid currentColor; transform:rotate(45deg); transition:transform .2s ease}
-        .gift-head[aria-expanded="true"] .chev{ transform:rotate(-135deg) }
-
-        .gift-body{display:none; padding:0}
-        .gift-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start; /* 👈 추가 */
-          gap: 16px;
-          padding: 16px;
-        }
-        .divider{height:1px; background:var(--line)}
-        .gift-info{min-width:0}
-        .who {
-          color: var(--ink);
-          margin-bottom: 4px;
-          text-align: left; /* 👈 추가 */
-        }
-        .bank{color:var(--sub); font-family: 'Noto serif kr', serif; font-size:0.8em;}
-        .acct{font-weight:700; color:var(--ink)}
-
-        .gift-actions {
-          display: flex;
-          gap: 10px;
-          flex-wrap: wrap;
-          align-items: center; /* 또는 flex-start */
-        }        .btn{border:none; border-radius:999px; padding:10px 16px; font-weight:700; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.06)}
-        .btn.pay{background:var(--pay)}
-        .btn.ghost{background:#fff; border:1px solid var(--line)}
-        .btn:hover{filter:brightness(.98)}
-
-        .copy-toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:#222; color:#fff; padding:8px 12px; border-radius:8px; opacity:0; pointer-events:none; transition:opacity .25s}
-        .copy-toast.show{opacity:1}
-
-        @media (max-width:640px){
-        .gift-row{flex-direction:column; align-items:flex-start}
-        .gift-actions{width:100%}
-        }
-
-        /* 1) 이름 — [복사] 버튼 한 줄, 그 아래 계좌 한 줄 */
-.gift-row{
-  display: grid;
-  grid-template-columns: 1fr auto; /* 왼쪽 넓게, 오른쪽 버튼 */
-  grid-template-rows: auto auto;   /* 1행: who+actions / 2행: bank */
-  align-items: center;
-  gap: 6px 10px;                    /* 행/열 간격 */
-  padding: 14px 16px;               /* 살짝 줄임 */
-}
-
-.gift-row .who{ grid-column: 1 / 2; margin:0; }
-.gift-row .gift-actions{
-  grid-column: 2 / 3;
-  white-space: nowrap;              /* 버튼 줄바꿈 방지 */
-}
-.gift-row .bank{ grid-column: 1 / -1; } /* 2행 전체 폭 */
-
-.gift-actions .btn{
-  padding: 8px 12px;                /* 버튼 작게 */
-  font-size: 13px;
-  border-radius: 10px;              /* 둥근알약 너무 크면 줄임 */
-}
-.gift-actions .btn.ghost{ border:1px solid var(--line); }
-.gift-actions .btn.pay{ background: var(--pay); }
-
-/* 2) 아주 작은 화면 최적화 */
-@media (max-width: 420px){
-  .gift-row{ gap: 6px 8px; padding: 12px; }
-  .gift-actions .btn{ padding: 7px 10px; font-size: 12.5px; }
-  .who{ font-size: 15px; }
-  .bank{ font-size: 12.5px; }
-}
-
-/* 3) 데스크톱/태블릿엔 좌우 정렬 예쁘게 보이도록 */
-@media (min-width: 641px){
-  .gift-row{ gap: 8px 12px; }
-}
-.gift-row{
-  display: grid;
-  grid-template-columns: minmax(0,1fr) auto; /* 왼쪽 칸 늘려줌 */
-  grid-template-rows: auto auto;
-  align-items: center;
-  gap: 6px 10px;
-  padding: 14px 16px;
-}
-
-.gift-row .who,
-.gift-row .bank{
-  white-space: nowrap;   /* 줄바꿈 방지 */
-  overflow: hidden;      /* 넘치면 숨김 */
-  text-overflow: ellipsis; /* 너무 길면 ... 처리 */
-}
-/* 은행/계좌번호를 항상 왼쪽 정렬로 */
-.gift-row .bank {
-  text-align: left;   /* 텍스트를 왼쪽으로 */
-  align-self: start;  /* 수직도 위쪽(top)으로 */
-  margin-top: 2px;    /* 살짝 띄워주면 더 자연스러움 */
-}
-        </style>
-
-        <script>
-        // 아코디언 열고닫기
-        document.querySelectorAll('.gift-head').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-            const expanded = btn.getAttribute('aria-expanded') === 'true';
-            btn.setAttribute('aria-expanded', String(!expanded));
-            const body = btn.parentElement.querySelector('.gift-body');
-            body.style.display = expanded ? 'none' : 'block';
-        });
-        });
-
-        // 계좌번호 복사
-        const toast = document.getElementById('copyToast');
-        function showToast(){ toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),1400); }
-        document.querySelectorAll('.btn.ghost[data-copy]').forEach(b=>{
-        b.addEventListener('click', async ()=>{
-            try{
-            await navigator.clipboard.writeText(b.dataset.copy);
-            showToast();
-            }catch(e){
-            // 클립보드가 막힌 경우 input으로 폴백
-            const tmp = document.createElement('input');
-            tmp.value = b.dataset.copy; document.body.appendChild(tmp);
-            tmp.select(); document.execCommand('copy'); document.body.removeChild(tmp);
-            showToast();
-            }
-        });
-        });
-        </script>
-
-        <!--h3 class="invite-sub fade-in" style= "margin-top:30px; text-align:center; letter-spacing:0em">Thank you</h3-->
-        <hr class="green-divider">
-
-        <!--div class="ww-section bg-light fade-in" id="comment">
-            <div class="ww-photo-gallery fade-in">
-                <div class="container fade-in">
-                    <div class="col text-center fade-in"-->
-                        <!--h2 class="h1 text-center pb-3 ww-title fade-in" style="font-size:1.5rem; font-weight:bold; font-family: 'Noto Serif KR', serif;"><span class="ico"><img src="images/icon/heart.png" alt="클로버" width="30" height="30" style="margin-top:-3px"></span> 축하 메시지</h2><br-->
-                        <!--div id="comments"></div-->
-                        <!--br>
-                        <div class="row fade-in">
-                            <div class="col text-center fade-in">
-                                <a class="btn btn-primary btn-submit" href="./guestbook.html"-->
-<!-- 토글 버튼 -->
-<!--button id="toggleGuestbook" class="btn btn-primary fade-in">메시지 보내기 버튼</button>
-<style>
-#toggleGuestbook {
-  display: none;
-}
-</style>
-< 방명록 섹션 (메인에 인라인) >
-<section id="guestbookSection" style="display:none; margin-top:16px;">
-  < 입력 폼 >
-  <form id="guestbookForm" style="padding:12px 18px; display:grid; grid-template-columns:1fr auto; gap:10px; align-items:start; border:1px solid #ffdbfc; border-radius:12px;">
-    <input id="gbName" name="name" required="" placeholder="이름" style="padding:10px; border:1px solid #ffffff; border-radius:8px;">
-    <button class="btn fade-in" style="padding:10px 14px; border-radius:10px; border:1px solid #ffdbfc; background:#ffdbfc;">등록</button>
-
-    <textarea id="gbMsg" name="message" required="" placeholder="메시지를 입력하세요" rows="3" style="grid-column:1 / -1; padding:10px; border:1px solid #ddd; border-radius:8px;"></textarea>
-
-    < 비밀번호(삭제에 사용) >
-    <input id="gbPwd" name="password" type="password" required="" placeholder="비밀번호(삭제 시 필요)" style="grid-column:1 / -1; padding:10px; border:1px solid #ddd; border-radius:8px;">
-
-    < 허니팟(봇차단, 숨김) >
-    <input type="text" name="phone" tabindex="-1" autocomplete="off" style="position:absolute; left:-9999px; width:1px; height:1px;">
-  </form>
-
-  < 목록 >
-  <div class="gb--divider" aria-hidden="true"></div>
-  <div id="guestbookList" style="padding:16px 0;"></div>
-</section-->
-<!--style>
-  /* 전체 폰트 & 색상 */
-  /* 전역 body는 건드리지 말고, 방명록 섹션만 */
-  #guestbookSection,
-  #guestbookSection * {
-    font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-    color: #222;
-}
-
-  /* 방명록 섹션 */
-  #guestbookSection {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  }
-
-  /* 입력 폼 */
-  #guestbookForm {
-    background: #f9f9f9;
-    border-radius: 5px;
-    padding: 8px;
-    margin-bottom: 10px;
-  }
-  #guestbookForm input,
-  #guestbookForm textarea {
-    font-size: 14px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  #guestbookForm input:focus,
-  #guestbookForm textarea:focus {
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 3px rgba(74,144,226,0.2);
-    outline: none;
-  }
-  #guestbookForm button {
-    background: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  #guestbookForm button:hover {
-    background: #3a78c2;
-  }
-/* 방명록 목록 영역 - 파스텔톤 배경 + 3컬럼 그리드 */
-#guestbookList {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
-  padding: 20px;
-  border-radius: 12px;
-
-/* 코르크 배경 + 흰색 반투명 오버레이 */
-background: 
-  linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)),
-  url('images/cork.jpg') center center / cover no-repeat;
-
-/* 포스트잇 카드 스타일 */
-.gb--card {
-  background: #ffffff; /* 파스텔 노랑 */
-  border: 1px solid #ffffff;
-  border-radius: 6px;
-  padding: 14px 16px;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  min-height: 140px;
-}
-.gb--card:hover {
-  transform: rotate(0deg) scale(1.02);
-  box-shadow: 4px 4px 10px rgba(0,0,0,0.25);
-}
-
-/* 카드 안 글자 */
-.gb--card strong {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 16px;
-  color: #333;
-}
-.gb--card small {
-  color: #555;
-  font-size: 12px;
-}
-.gb--card div {
-  white-space: pre-wrap;
-  line-height: 1.5;
-}
-
-  /* 삭제 버튼 */
-  .gb-del {
-    background: transparent;
-    border: none;
-    color: #999;
-    cursor: pointer;
-    border-radius: 6px;
-    padding: 4px 6px;
-    transition: background 0.2s, color 0.2s;
-  }
-  .gb-del:hover {
-    background: #ffecec;
-    color: #d9534f;
-  }
-</style-->
-
-
-
-<style>
-.share-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 30px 0;
-}
-.share-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
-  border-radius: 30px;
-  text-decoration: none;
-  font-size: 15px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-.share-btn .icon {
-  font-size: 18px;
-}
-.kakao {
-  background-color: #ffe812;
-  color: #3b1e1e;
-}
-.kakao:hover {
-  background-color: #ffeb33;
-}
-.copy {
-  background-color: #f5f5f5;
-  color: #333;
-}
-.copy:hover {
-  background-color: #383838;
-}
-
-/* 복사 완료 토스트 */
-.toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.85);
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-.toast.show {
-  opacity: 1;
-}
-
-.toast {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.85);
-  color: #fff;
-  padding: 6px 14px;       /* 좌우 패딩 줄임 */
-  border-radius: 16px;
-  font-size: 14px;
-  text-align: center;      /* 텍스트 가운데 정렬 */
-  max-width: 80%;          /* 너무 길어지지 않게 */
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-  z-index: 9999;
-}
-.toast.show {
-  opacity: 1;
-}
-
-
-
-.share-section {
-  display: flex;
-  flex-direction: row;     /* 가로 배치 */
-  justify-content: center; /* 가운데 정렬 */
-  align-items: center;
-  gap: 12px;               /* 버튼 간격 */
-  padding: 20px 0;         /* 위아래 여백 */
-  flex-wrap: wrap;         /* 너무 좁으면 자동 줄바꿈 */
-}
-
-/* ── 공유/복사 영역: 더 예쁘게 */
-.share-section{
-  display:flex; justify-content:center; align-items:center;
-  gap:14px; padding:22px 0; flex-wrap:wrap;
-}
-
-/* 공통 버튼 스타일 */
-.share-btn{
-  display:inline-flex; align-items:center; gap:10px;
-  padding:12px 18px; border-radius:999px;
-  font-size:15.5px; font-weight:700; letter-spacing:-0.2px;
-  border:1px solid rgba(0,0,0,.06);
-  box-shadow:0 8px 24px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.05);
-  transform:translateY(0); transition:transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
-  white-space:nowrap;
-}
-
-/* 아이콘 정렬 보정 */
-.share-btn .icon,
-.share-btn .icon img{ display:inline-block; vertical-align:middle; line-height:1; }
-
-/* Kakao 브랜드 톤 */
-.kakao{
-  background:#FEE500; /* 공식 노랑 */
-  color:#111;
-}
-.kakao:hover{
-  box-shadow:0 10px 28px rgba(0,0,0,.10), 0 3px 10px rgba(0,0,0,.06);
-  transform:translateY(-1px);
-}
-
-/* Copy 버튼: 라이트 그레이 + 다크 호버 */
-.copy{
-  background:#f7f7f7; color:#222;
-}
-
-/* 활성화/포커스 접근성 */
-.share-btn:focus-visible{
-  outline:none;
-  box-shadow:0 0 0 3px rgba(53,143,255,.25), 0 8px 24px rgba(0,0,0,.06);
-}
-
-/* 아주 작은 화면에서 살짝 컴팩트하게 */
-@media (max-width:420px){
-  .share-section{ gap:10px; }
-  .share-btn{ padding:11px 16px; font-size:14.5px; }
-}
-
-/* 모션 줄이기 선호 시 애니메이션 최소화 */
-@media (prefers-reduced-motion: reduce){
-  .share-btn{ transition:none; }
-}
-
-/* Copy 버튼: 밝은 톤으로 유지 */
-.share-section .copy{
-  background:#f7f7f7; color:#222;
-}
-
-.share-section .copy:hover,
-.share-section .copy:active{
-  background:#efefef;      /* 밝은 회색 */
-  color:#111;
-  box-shadow:0 10px 28px rgba(0,0,0,.08), 0 3px 10px rgba(0,0,0,.05);
-  transform:translateY(-1px);
-}
-
-/* 포커스 링(접근성) — 진하게 보이되 어둡지 않게 */
-.share-section .share-btn:focus-visible{
-  outline:none;
-  box-shadow:0 0 0 3px rgba(53,143,255,.25),
-             0 8px 24px rgba(0,0,0,.06);
-}
-
-@media (prefers-color-scheme: dark){
-  .share-section .copy{ background:#2a2a2a; color:#f2f2f2; }
-  .share-section .copy:hover{ background:#333; }
-}
-
-
-</style>
-
-<!-- 복사 완료 메시지 -->
-<div id="toast" class="toast">링크가 복사되었습니다!</div>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const copyBtns = document.querySelectorAll('.copy');
-    copyBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const link = btn.dataset.link || location.href;
-  
-        // navigator.clipboard 지원 여부 체크
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(link).then(showToast).catch(fallbackCopy);
-        } else {
-          fallbackCopy();
-        }
-  
-        function fallbackCopy(){
-          // 임시 textarea 생성 → execCommand copy
-          const temp = document.createElement('textarea');
-          temp.value = link;
-          document.body.appendChild(temp);
-          temp.select();
-          try { document.execCommand('copy'); showToast(); }
-          catch(e){ alert('복사에 실패했습니다.'); }
-          document.body.removeChild(temp);
-        }
-  
-        function showToast(){
-          const toast = document.getElementById('toast');
-          toast.classList.add('show');
-          setTimeout(() => toast.classList.remove('show'), 1500);
-        }
-      });
-    });
-  });
-  </script>
-
-
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+<body>
+<header>
+  <div class="logo">▸ SIGNAL<span>LAB</span></div>
+  <div class="sw">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#3d5a7c" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input id="ti" placeholder="티커 입력 후 Enter (AAPL, TSLA, 005930.KS)">
+  </div>
+  <div class="hints">
+    <span class="h" onclick="qs('AAPL')">AAPL</span>
+    <span class="h" onclick="qs('TSLA')">TSLA</span>
+    <span class="h" onclick="qs('NVDA')">NVDA</span>
+    <span class="h" onclick="qs('005930.KS')">삼성전자</span>
+    <span class="h" onclick="qs('000660.KS')">SK하이닉스</span>
+  </div>
+  <div class="rbs">
+    <button class="rb" onclick="setR('3mo')">3M</button>
+    <button class="rb active" onclick="setR('6mo')">6M</button>
+    <button class="rb" onclick="setR('1y')">1Y</button>
+    <button class="rb" onclick="setR('2y')">2Y</button>
+  </div>
+  <div class="ibs">
+    <button class="ib on" data-i="bb" onclick="ti2('bb')">BB밴드</button>
+    <button class="ib on" data-i="ma" onclick="ti2('ma')">이동평균</button>
+  </div>
+  <div class="ak-wrap">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#3d5a7c" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    <input id="ak" placeholder="Alpha Vantage API Key" oninput="saveKey(this.value)">
+    <a href="https://www.alphavantage.co/support/#api-key" target="_blank" class="ak-link">무료발급↗</a>
+  </div>
+  <div class="ak-wrap">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#3d5a7c" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    <input id="wk" placeholder="Cloudflare Worker URL (Yahoo용)" oninput="saveWorkerUrl(this.value)" style="width:180px">
+    <a href="https://workers.cloudflare.com" target="_blank" class="ak-link">설정↗</a>
+  </div>
+</header>
+<div class="layout">
+  <div class="ca">
+    <div class="ib2" id="infobar"><span style="color:var(--t3);font-size:11px;font-family:'JetBrains Mono',monospace">종목을 검색하면 분석이 시작됩니다</span></div>
+    <div class="cw">
+      <div class="ov" id="ov">
+        <div class="ico">📈</div>
+        <div class="txt">티커를 입력하고 Enter를 눌러주세요<br>미국: AAPL · TSLA · NVDA<br>한국: 005930.KS · 000660.KS</div>
+      </div>
+      <div id="mc"></div><div id="rc"></div><div id="dc"></div>
     </div>
+  </div>
+  <div class="panel" id="panel">
+    <div class="ep"><div class="ico">🔍</div><div class="txt">종목을 검색하면<br>시그널 분석 결과가<br>여기에 표시됩니다</div></div>
+  </div>
 </div>
-</div>
-
-
-<style>
-.navbar-sound .form-range {
-  max-width: 90px;
-}
-@media (max-width: 480px){
-  .navbar-sound .form-range {
-    max-width: 70px;   /* 너무 커지지 않도록 */
-  }
-  .navbar-sound .playPause {
-    font-size: 12px; width: 28px; height: 28px;
-  }
-}
-</style>
-
-<!-- 반복재생 -->
-<audio id="player" src="mus.mp3" preload="auto" autoplay loop></audio>
-
 <script>
-  const audio   = document.getElementById('player');
-  const playBtn = document.getElementById('playPause');
-
-  playBtn.addEventListener('click', async () => {
-    try {
-      if (audio.paused) {
-        await audio.play();
-      } else {
-        audio.pause();
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  });
-</script>
-
-
-
-
-<script>
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbxmq1oirgfr1hTm6BzppbGkJi8probMGkCSlJ37Aek6ihjpZn2farghFMysLLkQca5I/exec';
-
-  const section = document.getElementById('guestbookSection');
-  const listEl  = document.getElementById('guestbookList');
-  const nameEl  = document.getElementById('gbName');
-  const msgEl   = document.getElementById('gbMsg');
-  const pwdEl   = document.getElementById('gbPwd');
-
-
-  // 1) 토글: 버튼을 누르면 메인 내 섹션을 펼치고 목록 로딩
-  document.getElementById('toggleGuestbook').addEventListener('click', () => {
-    const open = section.style.display !== 'none';
-    section.style.display = open ? 'none' : 'block';
-    if (!open) loadComments();
-  });
-
-  // 페이지 로드 시 자동으로 펼치기 + 데이터 로드
-window.addEventListener('DOMContentLoaded', () => {
-  section.style.display = 'block';
-  loadComments();
+let CR='6mo',CT='',sB=true,sM=true,SD=null,AS=[];
+const RANGE_MO={'3mo':3,'6mo':6,'1y':12,'2y':24};
+function getKey(){return document.getElementById('ak').value.trim()||'';}
+function saveKey(v){localStorage.setItem('avKey',v.trim());}
+function getWorkerUrl(){return document.getElementById('wk').value.trim()||'';}
+function saveWorkerUrl(v){localStorage.setItem('cfWorkerUrl',v.trim());}
+window.addEventListener('load',()=>{
+  const k=localStorage.getItem('avKey');if(k)document.getElementById('ak').value=k;
+  const w=localStorage.getItem('cfWorkerUrl');if(w)document.getElementById('wk').value=w;
 });
-
-  // 2) 목록 불러오기
-  async function loadComments() {
-    listEl.textContent = '불러오는 중...';
-    try {
-      const res = await fetch(GAS_URL); // GET
-      if (!res.ok) throw new Error('fetch failed');
-      const rows = await res.json();    // [{id,name,message,timestamp}, ...]
-      if (!rows.length) {
-        listEl.innerHTML = '<div style="color:#777; padding:24px; text-align:center; border:1px dashed #ddd; border-radius:12px;">아직 메시지가 없습니다. 첫 메시지를 남겨보세요!</div>';
-        return;
-      }
-      listEl.innerHTML = rows.map(renderCard).join('');
-    } catch (e) {
-      console.error(e);
-      listEl.textContent = '메시지를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.';
-    }
-  }
-
-  // 3) 카드 렌더 + 삭제 버튼 포함
-    function renderCard(row) {
-    return `
-        <div class="gb--card" data-id="${row.id}">
-        <!-- 제목 + 삭제 버튼 (기존 그대로) -->
-        <div style="display:flex; justify-content:space-between; gap:12px; margin-bottom:6px; align-items:center;">
-            <strong>${escapeHtml(row.name)}</strong>
-            <button class="gb-del" title="삭제" style="border:none; background:#f6f6f6; border:1px solid #ddd; padding:6px 8px; border-radius:8px; cursor:pointer;">🗑</button>
-        </div>
-
-        <!-- 메시지 내용 -->
-        <div style="white-space:pre-wrap; line-height:1.5; margin-bottom:8px;">
-            ${escapeHtml(row.message)}
-        </div>
-
-        <!-- 시간 (맨 아래) -->
-        <div style="text-align:right; color:#555; font-size:12px;">
-            ${row.timestamp ? new Date(row.timestamp).toLocaleString() : ''}
-        </div>
-        </div>
-    `;
-    }
-
-  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-
-  // 4) 등록 (POST x-www-form-urlencoded)
-  document.getElementById('guestbookForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = nameEl.value.trim();
-    const message = msgEl.value.trim();
-    const password = pwdEl.value.trim();
-    if (!name || !message || !password) return;
-
-    try {
-      const body = new URLSearchParams({ action:'add', name, message, password, phone: '' });
-      const res = await fetch(GAS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        body
-      });
-      const json = await res.json();
-      if (json.ok) {
-        msgEl.value = ''; pwdEl.value = '';
-        loadComments();
-      } else {
-        alert('등록 실패: ' + (json.error || 'unknown'));
-      }
-    } catch (e) {
-      console.error(e);
-      alert('등록 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-    }
+function setR(r){CR=r;document.querySelectorAll('.rb').forEach((b,i)=>b.classList.toggle('active',['3mo','6mo','1y','2y'][i]===r));if(CT)load(CT);}
+function ti2(i){if(i==='bb')sB=!sB;else sM=!sM;document.querySelector('.ib[data-i="'+i+'"]').classList.toggle('on',i==='bb'?sB:sM);if(SD)drawCharts();}
+function qs(t){document.getElementById('ti').value=t;load(t);}
+document.getElementById('ti').addEventListener('keydown',e=>{if(e.key==='Enter'){const t=e.target.value.trim().toUpperCase();if(t)load(t);}});
+// ══ FETCH HELPER ══
+async function tryFetch(url, ms=10000){
+  const c=new AbortController(), id=setTimeout(()=>c.abort(),ms);
+  try{const r=await fetch(url,{signal:c.signal});clearTimeout(id);if(!r.ok)throw new Error(r.status);return await r.text();}
+  catch(e){clearTimeout(id);throw e;}
+}
+// ══ DATA: Yahoo Finance 파싱 공통 ══
+function parseYahooJson(json){
+  if(!json?.chart?.result?.[0]) return null;
+  const res=json.chart.result[0],m=res.meta,q=res.indicators.quote[0],ts=res.timestamp;
+  const rows={dates:[],open:[],high:[],low:[],close:[],volume:[]};
+  ts.forEach((t,i)=>{
+    if(q.close[i]==null||q.open[i]==null)return;
+    rows.dates.push(new Date(t*1000).toISOString().split('T')[0]);
+    rows.open.push(q.open[i]);rows.high.push(q.high[i]);
+    rows.low.push(q.low[i]);rows.close.push(q.close[i]);
+    rows.volume.push(q.volume[i]||0);
   });
-
-  // 5) 삭제 (이벤트 위임)
-  listEl.addEventListener('click', async (e) => {
-    const btn = e.target.closest('.gb-del');
-    if (!btn) return;
-
-    const card = btn.closest('.gb--card');
-    const id = card?.dataset?.id;
-    if (!id) return;
-
-    const password = prompt('이 메시지의 비밀번호를 입력하세요:');
-    if (!password) return;
-
-    try {
-      const res = await fetch(GAS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        body: new URLSearchParams({ action:'delete', id, password })
-      });
-      const json = await res.json();
-      if (json.ok) {
-        card.remove();
-      } else {
-        alert('삭제 실패: ' + (json.error || 'unknown'));
-      }
-    } catch (err) {
-      console.error(err);
-      alert('네트워크 오류로 삭제하지 못했습니다.');
+  if(rows.close.length<20) return null;
+  return{rows,ticker:m.symbol,name:m.shortName||m.longName||m.symbol,
+    currency:m.currency||'USD',
+    currentPrice:m.regularMarketPrice||rows.close[rows.close.length-1],
+    previousClose:m.chartPreviousClose||rows.close[rows.close.length-2]};
+}
+// ══ DATA: Yahoo Finance via Cloudflare Worker (1차) ══
+async function getYahooViaWorker(ticker){
+  const base=getWorkerUrl().replace(/\/$/,'');
+  if(!base) return null;
+  const text=await tryFetch(`${base}/${ticker}?range=${CR}`,12000);
+  return parseYahooJson(JSON.parse(text));
+}
+// ══ DATA: Yahoo Finance 직접 (2차, 간혹 CORS 허용) ══
+async function getYahoo(ticker){
+  for(const host of ['query1','query2']){
+    const url=`https://${host}.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=${CR}&includePrePost=false`;
+    try{
+      const result=parseYahooJson(JSON.parse(await tryFetch(url,8000)));
+      if(result) return result;
+    }catch{continue;}
+  }
+  return null;
+}
+// ══ DATA: Alpha Vantage (2차, 무료 CORS 지원) ══
+async function getAlphaVantage(ticker){
+  const key=getKey();
+  if(!key) throw new Error('API 키 없음 — 우측 상단에 Alpha Vantage 무료 키를 입력하세요');
+  // 한국 주식: 005930.KS → 005930.KSC
+  const avTicker=ticker.endsWith('.KS')?ticker.replace('.KS','.KSC'):ticker;
+  const size=CR==='1y'||CR==='2y'?'full':'compact';
+  const url=`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${avTicker}&outputsize=${size}&apikey=${key}`;
+  const text=await tryFetch(url,15000);
+  const json=JSON.parse(text);
+  if(json['Note']||json['Information']) throw new Error('API 한도 초과 — 1분 후 재시도하거나 새 키를 발급받으세요');
+  const ts=json['Time Series (Daily)'];
+  if(!ts) throw new Error(`종목을 찾을 수 없습니다 (${avTicker})`);
+  const cutoff=new Date();
+  cutoff.setMonth(cutoff.getMonth()-(RANGE_MO[CR]||6));
+  const cutoffStr=cutoff.toISOString().split('T')[0];
+  const rows={dates:[],open:[],high:[],low:[],close:[],volume:[]};
+  Object.entries(ts).sort(([a],[b])=>a.localeCompare(b)).forEach(([date,d])=>{
+    if(date<cutoffStr)return;
+    rows.dates.push(date);
+    rows.open.push(+d['1. open']);rows.high.push(+d['2. high']);
+    rows.low.push(+d['3. low']);rows.close.push(+d['4. close']);
+    rows.volume.push(+d['5. volume']);
+  });
+  if(rows.close.length<20) throw new Error('데이터 부족 (20일 미만)');
+  const last=rows.close[rows.close.length-1],prev=rows.close[rows.close.length-2]||last;
+  return{rows,ticker,name:ticker,currency:ticker.endsWith('.KS')?'KRW':'USD',currentPrice:last,previousClose:prev};
+}
+// ══ LOAD ══
+async function load(ticker){
+  CT=ticker;
+  const hasWorker=!!getWorkerUrl();
+  setOv('<div class="sp"></div><div class="txt" style="margin-top:4px"><b style="color:var(--t)">'+ticker+'</b> 로딩 중...</div><div class="prog">'+(hasWorker?'<div class="pg act" id="p1">⟳ Yahoo Finance 요청 중...</div><div class="pg" id="p2">○ Alpha Vantage (폴백)</div>':'<div class="pg act" id="p1">⟳ Alpha Vantage 요청 중...</div>')+'</div>');
+  document.getElementById('mc').innerHTML='';document.getElementById('rc').innerHTML='';document.getElementById('dc').innerHTML='';
+  document.getElementById('panel').innerHTML='<div class="ep"><div class="sp"></div><div class="txt" style="margin-top:8px">분석 중...</div></div>';
+  try{
+    let result=null;
+    // 1차: Cloudflare Worker → Yahoo Finance 직접 (조용히 시도)
+    try{result=await getYahooViaWorker(ticker)||await getYahoo(ticker);}catch{}
+    // 2차: Alpha Vantage
+    if(!result){
+      const p1=document.getElementById('p1');
+      if(p1&&hasWorker){p1.className='pg';p1.textContent='✗ Yahoo 실패';}
+      const p2=document.getElementById('p2');
+      if(p2){p2.className='pg act';p2.textContent='⟳ Alpha Vantage 요청 중...';}
+      result=await getAlphaVantage(ticker);
     }
-  });
-
-</script>
-
-</div>
-
-<script>
-  // (A) 스크롤 페이드인 옵저버: 로딩 끝난 뒤에만 호출할 것!
-  function startFadeInObserver() {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-          if (e.isIntersecting) {
-            e.target.style.transitionDelay = (parseInt(e.target.dataset.delay||0,10) || 0) + 'ms';
-            e.target.classList.add('show');
-            io.unobserve(e.target);
-          }
-        });
-      }, {
-        threshold: 0.08,
-        rootMargin: '0px 0px -12% 0px' // 모바일에서 화면 들어오기 "조금 전"에 미리 시작
-      });
-
-      document.querySelectorAll('.fade-in').forEach((el, i) => {
-        if (!el.dataset.delay) el.dataset.delay = (i % 8) * 60; // 살짝 스태거
-        io.observe(el);
-      });
+    if(!result) throw new Error('데이터를 가져오지 못했습니다');
+    const {rows,...meta}=result;
+    SD=Object.assign({},meta,rows);
+    process();
+  }catch(e){
+    const msg=e.message||'데이터를 불러오지 못했습니다';
+    setOv('<div class="eb"><div style="font-size:20px;margin-bottom:8px">⚠</div><div>'+msg+'</div><small>우측 상단에 <b>Alpha Vantage 무료 API 키</b>를 입력하세요</small></div>');
+    document.getElementById('panel').innerHTML='<div class="ep"><div class="ico">❌</div><div class="txt">불러오기 실패</div></div>';
   }
-
-  // (B) 로딩 글자 애니 후: 게이트 해제 → 옵저버 시작 → 오버레이 제거
-  (function(){
-    const MESSAGE = "Happy\nWedding\nDay";
-    const STEP_MS = 180; <!--180, 800-->
-    const EXTRA_WAIT_MS = 800;
-
-    const overlay = document.getElementById('loadingOverlay');
-    const textBox = document.getElementById('loadingText');
-    const page    = document.getElementById('pageContent');
-
-    // 글자 애니메이션
-    MESSAGE.split('').forEach((ch, i) => {
-      const span = document.createElement('span');
-      span.className = 'char';
-      if (ch === '\n') span.innerHTML = '<br>'; else span.textContent = ch;
-      textBox.appendChild(span);
-      setTimeout(() => span.classList.add('show'), i * STEP_MS);
-    });
-
-    const total = MESSAGE.length * STEP_MS + EXTRA_WAIT_MS;
-
-    setTimeout(() => {
-      // 1) 본문 페이드인 준비(페이지 래퍼가 있다면 그대로 유지)
-      page.classList.add('show');
-
-      // 2) 게이트 해제 ⇒ 이제 .fade-in.show가 트랜지션을 수행
-      document.documentElement.removeAttribute('data-loading');
-
-      // 3) 스크롤 페이드인 옵저버 시작
-      startFadeInObserver();
-
-      // 4) 오버레이 제거 + 스크롤 해제 + 맨 위로
-      requestAnimationFrame(() => {
-        overlay.style.display = 'none';
-        document.body.classList.remove('no-scroll');
-        document.body.style.removeProperty('overflow');
-        document.body.style.removeProperty('height'); 
-        // window.scrollTo(0,0);
-        sessionStorage.setItem('weddingLoaded','1');
-      });
-    }, total);
-  })();
+}
+function setOv(html){const o=document.getElementById('ov');o.style.display='flex';o.innerHTML=html;}
+// ══ INDICATORS ══
+const sma=(a,n)=>a.map((_,i)=>i<n-1?null:a.slice(i-n+1,i+1).reduce((s,v)=>s+v,0)/n);
+function ema(a,n){const k=2/(n+1),r=Array(a.length).fill(null);let p=null;
+  for(let i=0;i<a.length;i++){if(a[i]==null)continue;if(p==null){p=a[i];r[i]=p;continue;}p=a[i]*k+p*(1-k);r[i]=p;}return r;}
+function bollinger(c,n=20,k=2){const mid=sma(c,n),up=[],lo=[];
+  for(let i=0;i<c.length;i++){if(!mid[i]){up.push(null);lo.push(null);continue;}
+    const s=c.slice(i-n+1,i+1),mn=s.reduce((a,b)=>a+b,0)/n,sd=Math.sqrt(s.reduce((a,b)=>a+(b-mn)**2,0)/n);
+    up.push(mn+k*sd);lo.push(mn-k*sd);}return{mid,up,lo};}
+function rsi(c,n=14){const r=Array(c.length).fill(null);let ag=0,al=0;
+  for(let i=1;i<=n;i++){const d=c[i]-c[i-1];if(d>0)ag+=d;else al-=d;}ag/=n;al/=n;
+  r[n]=100-100/(1+(al===0?Infinity:ag/al));
+  for(let i=n+1;i<c.length;i++){const d=c[i]-c[i-1],g=d>0?d:0,l=d<0?-d:0;
+    ag=(ag*(n-1)+g)/n;al=(al*(n-1)+l)/n;r[i]=100-100/(1+(al===0?Infinity:ag/al));}return r;}
+function macd(c,f=12,s=26,sg=9){
+  const ef=ema(c,f),es=ema(c,s),ml=ef.map((v,i)=>v==null||es[i]==null?null:v-es[i]);
+  const sl=ema(ml.map(v=>v??0),sg);
+  return{ml,sl,hist:ml.map((v,i)=>v==null||sl[i]==null?null:v-sl[i])};}
+function stoch(h,l,c,kp=14,dp=3){const k=[];
+  for(let i=0;i<c.length;i++){if(i<kp-1){k.push(null);continue;}
+    const hh=Math.max(...h.slice(i-kp+1,i+1)),ll=Math.min(...l.slice(i-kp+1,i+1));
+    k.push(hh===ll?50:((c[i]-ll)/(hh-ll))*100);}return{k,d:sma(k.map(v=>v??50),dp)};}
+function cdlPatterns(op,h,l,c){const p=[];
+  for(let i=2;i<c.length;i++){const bd=Math.abs(c[i]-op[i]),rn=h[i]-l[i];
+    const lw=Math.min(op[i],c[i])-l[i],uw=h[i]-Math.max(op[i],c[i]);
+    const b=c[i]>op[i],pb=c[i-1]>op[i-1];
+    if(bd<rn*.1&&rn>0)p.push({i,n:'도지',d:'n'});
+    if(lw>bd*2&&uw<bd*.5&&bd>0)p.push({i,n:'해머',d:'b'});
+    if(uw>bd*2&&lw<bd*.5&&bd>0)p.push({i,n:'슈팅스타',d:'s'});
+    if(!pb&&b&&op[i]<c[i-1]&&c[i]>op[i-1]&&bd>Math.abs(c[i-1]-op[i-1]))p.push({i,n:'강세장악형',d:'b'});
+    if(pb&&!b&&op[i]>c[i-1]&&c[i]<op[i-1]&&bd>Math.abs(c[i-1]-op[i-1]))p.push({i,n:'약세장악형',d:'s'});}
+  return p;}
+// ══ SIGNALS ══
+function detectSig(d,inds){
+  const{close:c,high:h,low:l,open:op,volume:v,dates}=d,{R,B,s20,s50,s200,M,ST,vm,CP}=inds;
+  const sigs=[],n=c.length;
+  const add=(i,cat,nm,desc,str,ind)=>sigs.push({i,date:dates[i],category:cat,name:nm,desc,strength:str,price:c[i],ind:ind||[]});
+  for(let i=50;i<n;i++){
+    const r=R[i],rp=R[i-1],p=c[i],pp=c[i-1],bu=B.up[i],bl=B.lo[i],bm=B.mid[i];
+    const m=M.ml[i],ms=M.sl[i],mp=M.ml[i-1],msp=M.sl[i-1],k=ST.k[i],kp=ST.k[i-1];
+    const vr=v[i]&&vm[i]?v[i]/vm[i]:1;
+    // 강매수
+    if(r&&rp&&r<35&&r>rp&&rp<30)add(i,'sb','RSI 과매도 반등',`RSI ${rp.toFixed(1)}→${r.toFixed(1)} 반등. 강한 매수 신호.`,3,['RSI']);
+    if(s50[i]&&s200[i]&&s50[i-1]&&s200[i-1]&&s50[i-1]<=s200[i-1]&&s50[i]>s200[i])add(i,'sb','골든 크로스',`MA50(${s50[i].toFixed(0)}) MA200(${s200[i].toFixed(0)}) 상향 돌파. 중장기 상승 전환.`,3,['MA50','MA200']);
+    if(m&&ms&&mp&&msp&&mp<msp&&m>ms&&r&&r<50)add(i,'sb','MACD 상향 돌파',`MACD(${m.toFixed(3)})가 시그널 상향 돌파.`,3,['MACD','RSI']);
+    if(bl&&l[i-1]<bl*1.005&&c[i]>op[i]&&vr>1.2)add(i,'sb','BB 하단 반등',`BB 하단(${bl.toFixed(0)}) 터치 후 양봉. 거래량 +${((vr-1)*100).toFixed(0)}%.`,3,['BB','VOL']);
+    // 분할매수
+    if(r&&rp&&r>=35&&r<=45&&r>rp)add(i,'pb','RSI 저가권 반등',`RSI(${r.toFixed(1)}) 저가 구간 반등. 분할매수 구간.`,2,['RSI']);
+    if(bl&&p<bl*1.02&&p>bl)add(i,'pb','BB 하단 근접',`현재가 BB 하단(${bl.toFixed(0)}) 근접. 1차 분할매수.`,2,['BB']);
+    if(k&&kp&&k<25&&k>kp)add(i,'pb','스토캐스틱 과매도 반등',`스토캐스틱 K(${k.toFixed(1)}) 반등. 단기 저점.`,2,['Stoch']);
+    if(s20[i]&&Math.abs(p-s20[i])/s20[i]<0.01&&p>=s20[i]&&c[i]>op[i])add(i,'pb','MA20 지지',`MA20(${s20[i].toFixed(0)}) 지지 후 양봉.`,1,['MA20']);
+    if(s20[i]&&Math.abs(p-s20[i])/s20[i]<0.01&&p<=s20[i]&&c[i]<op[i])add(i,'ps2','MA20 저항',`MA20(${s20[i].toFixed(0)}) 저항 후 음봉.`,1,['MA20']);
+    // 강매도
+    if(r&&rp&&r>65&&r<rp&&rp>70)add(i,'ss2','RSI 과매수 하락',`RSI ${rp.toFixed(1)}→${r.toFixed(1)} 반락. 강한 매도 신호.`,3,['RSI']);
+    if(s50[i]&&s200[i]&&s50[i-1]&&s200[i-1]&&s50[i-1]>=s200[i-1]&&s50[i]<s200[i])add(i,'ss2','데스 크로스',`MA50 MA200 하향 돌파. 중장기 하락 전환.`,3,['MA50','MA200']);
+    if(m&&ms&&mp&&msp&&mp>msp&&m<ms&&r&&r>50)add(i,'ss2','MACD 하향 돌파',`MACD(${m.toFixed(3)}) 시그널 하향 돌파.`,3,['MACD']);
+    if(bu&&h[i-1]>bu&&c[i]<op[i])add(i,'ss2','BB 상단 후 음봉',`BB 상단(${bu.toFixed(0)}) 돌파 후 음봉.`,3,['BB']);
+    // 분할매도
+    if(r&&r>=65&&r<=75)add(i,'ps2','RSI 고가권 익절',`RSI(${r.toFixed(1)}) 고가 구간. 일부 익절 고려.`,2,['RSI']);
+    if(bu&&p>bu*.98&&p<bu)add(i,'ps2','BB 상단 근접 익절',`BB 상단(${bu.toFixed(0)}) 근접. 분할 익절.`,2,['BB']);
+    if(k&&kp&&k>75&&k<kp)add(i,'ps2','스토캐스틱 과매수 반락',`스토캐스틱 K(${k.toFixed(1)}) 반락. 단기 고점.`,2,['Stoch']);
+    // 위험
+    if(r&&r>80)add(i,'dg','RSI 극단 과매수 ⚠',`RSI ${r.toFixed(1)} 극도 과매수. 신규 매수 위험.`,3,['RSI']);
+    if(vr>2&&c[i]<op[i]&&(op[i]-c[i])/op[i]>0.03)add(i,'dg','대량 거래 급락 ⚠',`거래량 +${((vr-1)*100).toFixed(0)}% 급증 + 급락.`,3,['VOL']);
+    if(s200[i]&&pp>=s200[i]&&p<s200[i])add(i,'dg','MA200 하향 이탈 ⚠',`MA200(${s200[i].toFixed(0)}) 하향 이탈. 장기 하락 경고.`,3,['MA200']);
+    if(bl&&p<bl)add(i,'dg','BB 하단 이탈 ⚠',`BB 하단(${bl.toFixed(0)}) 이탈. 추가 하락 가능.`,3,['BB']);
+    // 기회
+    if(bu&&bl&&bm){const bw=(bu-bl)/bm,p5=(B.up[i-5]&&B.lo[i-5]&&B.mid[i-5])?(B.up[i-5]-B.lo[i-5])/B.mid[i-5]:bw+1;
+      if(bw<0.06&&p5>bw)add(i,'op','BB 스퀴즈 — 폭발 직전',`BB 폭(${(bw*100).toFixed(1)}%) 수축. 큰 방향성 돌파 예상.`,2,['BB']);}
+    if(vr>2.5&&c[i]>op[i])add(i,'op','거래량 급증 + 양봉',`+${((vr-1)*100).toFixed(0)}% 거래량 + 상승. 강한 매수세.`,2,['VOL']);
+    if(i>=5&&r&&R[i-5]&&c[i]<c[i-5]&&r>R[i-5]+5)add(i,'op','RSI 강세 다이버전스',`주가 하락 중 RSI 상승. 반전 가능성.`,2,['RSI']);}
+  CP.forEach(({i,n:nm,d:dr})=>{if(i>=c.length-20){
+    const cat=dr==='b'?'pb':dr==='s'?'ps2':'op';
+    add(i,cat,'캔들: '+nm,nm+'패턴. '+(dr==='b'?'단기 상승 가능성.':dr==='s'?'단기 하락 가능성.':'방향 전환 신호.'),1,['캔들']);}});
+  return sigs.sort((a,b)=>b.i-a.i);}
+// ══ PROCESS ══
+function process(){
+  const{close,high,low,open,volume}=SD;
+  const R=rsi(close),B=bollinger(close),s20=sma(close,20),s50=sma(close,50),s200=sma(close,200);
+  const M=macd(close),ST=stoch(high,low,close),vm=sma(volume,20),CP=cdlPatterns(open,high,low,close);
+  const inds={R,B,s20,s50,s200,M,ST,vm,CP};
+  AS=detectSig(SD,inds);SD._i=inds;
+  drawCharts();updateInfobar();drawPanel();}
+// ══ CHARTS ══
+function drawCharts(){
+  const{close,high,low,open,volume,dates}=SD,{R,B,s20,s50,s200,M}=SD._i;
+  document.getElementById('ov').style.display='none';
+  const bg='rgba(0,0,0,0)',gc='rgba(26,45,74,.5)',ac='#3d5a7c',ff="'JetBrains Mono',monospace";
+  const ax={gridcolor:gc,zerolinecolor:gc,tickfont:{family:ff,size:9,color:ac},color:ac,showgrid:true};
+  const sCfg={sb:{sym:'triangle-up',col:'#00e676',sz:12},pb:{sym:'triangle-up-open',col:'#69f0ae',sz:9},
+    ss2:{sym:'triangle-down',col:'#ff1744',sz:12},ps2:{sym:'triangle-down-open',col:'#ff6090',sz:9},
+    dg:{sym:'x',col:'#ff9100',sz:11},op:{sym:'diamond',col:'#2979ff',sz:10}};
+  const cNm={sb:'강한 매수',pb:'분할 매수',ss2:'강한 매도',ps2:'분할 매도',dg:'위험',op:'기회'};
+  const byCat={};AS.forEach(s=>{if(!byCat[s.category])byCat[s.category]=[];byCat[s.category].push(s);});
+  const sTr=Object.entries(byCat).map(([cat,ss])=>{
+    const c=sCfg[cat],ab=cat.includes('ss2')||cat==='ps2'||cat==='dg';
+    return{type:'scatter',mode:'markers',name:cNm[cat],x:ss.map(s=>s.date),
+      y:ss.map(s=>ab?high[s.i]*1.014:low[s.i]*0.986),
+      marker:{symbol:c.sym,color:c.col,size:c.sz,line:{width:1.5,color:c.col}},
+      text:ss.map(s=>`<b>${s.name}</b><br>${s.desc}<br><i style='opacity:.6'>지표: ${s.ind.join(', ')}</i>`),
+      hovertemplate:'%{text}<extra></extra>',showlegend:true};});
+  const tr=[{type:'candlestick',x:dates,open,high,low,close,
+    increasing:{line:{color:'#00e676',width:1.5},fillcolor:'#00e676'},
+    decreasing:{line:{color:'#ff1744',width:1.5},fillcolor:'#ff1744'},
+    showlegend:false,hoverinfo:'x+y',name:SD.ticker}];
+  if(sB){
+    tr.push({type:'scatter',mode:'lines',x:dates,y:B.up,line:{color:'rgba(0,230,118,.28)',width:1,dash:'dot'},showlegend:false,hoverinfo:'skip'});
+    tr.push({type:'scatter',mode:'lines',x:dates,y:B.lo,line:{color:'rgba(0,230,118,.28)',width:1,dash:'dot'},fill:'tonexty',fillcolor:'rgba(0,230,118,.02)',showlegend:false,hoverinfo:'skip'});
+    tr.push({type:'scatter',mode:'lines',x:dates,y:B.mid,line:{color:'rgba(0,230,118,.4)',width:1},showlegend:false,hoverinfo:'skip'});}
+  if(sM){[{d:s20,c:'#ffaa00',l:'MA20'},{d:s50,c:'#2979ff',l:'MA50'},{d:s200,c:'#d500f9',l:'MA200'}].forEach(({d,c,l})=>
+    tr.push({type:'scatter',mode:'lines',x:dates,y:d,line:{color:c,width:1.2},name:l,showlegend:true,hoverinfo:'skip'}));}
+  tr.push(...sTr);
+  const lo2={paper_bgcolor:bg,plot_bgcolor:bg,margin:{t:6,r:6,b:3,l:50},
+    xaxis:{...ax,type:'category',showticklabels:false,rangeslider:{visible:false}},
+    yaxis:{...ax,side:'right',tickformat:',.0f'},
+    legend:{orientation:'h',x:0,y:1.02,xanchor:'left',bgcolor:'rgba(0,0,0,0)',font:{family:ff,size:8,color:ac}},
+    hovermode:'x unified',hoverlabel:{bgcolor:'rgba(13,21,38,.95)',bordercolor:'#1a2d4a',font:{family:ff,size:10,color:'#cdd9f0'}}};
+  Plotly.newPlot('mc',tr,lo2,{responsive:true,displayModeBar:false});
+  Plotly.newPlot('rc',[
+    {type:'scatter',mode:'lines',x:dates,y:R,line:{color:'#2979ff',width:1.5},hovertemplate:'RSI: %{y:.1f}<extra></extra>'},
+    {type:'scatter',mode:'lines',x:dates,y:Array(dates.length).fill(70),line:{color:'rgba(255,23,68,.3)',width:1,dash:'dot'},showlegend:false,hoverinfo:'skip'},
+    {type:'scatter',mode:'lines',x:dates,y:Array(dates.length).fill(30),line:{color:'rgba(0,230,118,.3)',width:1,dash:'dot'},fill:'tonexty',fillcolor:'rgba(0,230,118,.03)',showlegend:false,hoverinfo:'skip'},
+  ],{paper_bgcolor:bg,plot_bgcolor:bg,margin:{t:2,r:6,b:3,l:50},
+    xaxis:{...ax,type:'category',showticklabels:false,rangeslider:{visible:false}},
+    yaxis:{...ax,side:'right',range:[0,100],tickvals:[30,50,70]},
+    annotations:[{x:.01,y:.9,xref:'paper',yref:'paper',text:'RSI',font:{family:ff,size:8,color:ac},showarrow:false}],
+    hovermode:'x unified',showlegend:false,hoverlabel:{bgcolor:'rgba(13,21,38,.95)',bordercolor:'#1a2d4a',font:{family:ff,size:10,color:'#cdd9f0'}}},
+  {responsive:true,displayModeBar:false});
+  const hc=M.hist.map(v=>v==null?'rgba(0,0,0,0)':v>=0?'rgba(0,230,118,.5)':'rgba(255,23,68,.5)');
+  Plotly.newPlot('dc',[
+    {type:'bar',x:dates,y:M.hist,marker:{color:hc},hovertemplate:'Hist: %{y:.3f}<extra></extra>'},
+    {type:'scatter',mode:'lines',x:dates,y:M.ml,line:{color:'#2979ff',width:1.5},hovertemplate:'MACD: %{y:.3f}<extra></extra>'},
+    {type:'scatter',mode:'lines',x:dates,y:M.sl,line:{color:'#ff9100',width:1.5},hovertemplate:'Sig: %{y:.3f}<extra></extra>'},
+  ],{paper_bgcolor:bg,plot_bgcolor:bg,margin:{t:2,r:6,b:18,l:50},
+    xaxis:{...ax,type:'category',tickangle:-30,nticks:8},yaxis:{...ax,side:'right'},
+    annotations:[{x:.01,y:.9,xref:'paper',yref:'paper',text:'MACD',font:{family:ff,size:8,color:ac},showarrow:false}],
+    hovermode:'x unified',showlegend:false,hoverlabel:{bgcolor:'rgba(13,21,38,.95)',bordercolor:'#1a2d4a',font:{family:ff,size:10,color:'#cdd9f0'}}},
+  {responsive:true,displayModeBar:false});
+  const cw=document.querySelector('.cw');
+  document.getElementById('mc').style.height=Math.max(230,cw.clientHeight-180)+'px';}
+// ══ INFOBAR ══
+function updateInfobar(){
+  const{ticker,name,currentPrice:cp,previousClose:pc,currency:cur}=SD;
+  const ch=cp-pc,chp=(ch/pc)*100,up=ch>=0;
+  const ps=cur==='KRW'?cp.toLocaleString('ko-KR')+'원':'$'+cp.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('infobar').innerHTML=`
+    <span class="in">${ticker}</span>
+    <span style="font-size:10px;color:var(--t2);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</span>
+    <span class="ip" style="color:${up?'var(--gn)':'var(--rd)'}">${ps}</span>
+    <span class="ich ${up?'up':'dn'}">${up?'+':''}${ch.toFixed(cur==='KRW'?0:2)} (${up?'+':''}${chp.toFixed(2)}%)</span>
+    <span class="im">${AS.length}개 시그널 · ${SD.dates.length}일</span>`;}
+// ══ PANEL ══
+function drawPanel(){
+  const{close,_i:{R,B,s50,s200,M}}=SD,n=close.length;
+  const lr=R[n-1],lbu=B.up[n-1],lbl=B.lo[n-1],lm=M.ml[n-1],ls=M.sl[n-1],l50=s50[n-1],l200=s200[n-1];
+  const cats={sb:{l:'강한 매수',i:'▲'},pb:{l:'분할 매수',i:'△'},ss2:{l:'강한 매도',i:'▼'},ps2:{l:'분할 매도',i:'▽'},dg:{l:'위험 신호',i:'⚠'},op:{l:'기회 신호',i:'◆'}};
+  const cnt={};AS.forEach(s=>{cnt[s.category]=(cnt[s.category]||0)+1;});
+  const bs=(cnt.sb||0)*3+(cnt.pb||0),ss=(cnt.ss2||0)*3+(cnt.ps2||0),ds=cnt.dg||0;
+  let vd,vc,st,tg;
+  if(ds>=2){vd='⚠ 위험 — 관망 또는 손절 검토';vc='var(--or)';st='복수의 위험 신호가 감지됩니다. 현금 비중 확보를 권장합니다.';tg=['현금확보','관망','손절검토'];}
+  else if(bs>ss+3){vd='🟢 매수 우세 — 단계적 진입';vc='var(--gn)';st='다수의 매수 시그널이 감지됩니다. 3회 이상 분할 매수를 권장합니다.';tg=['분할매수','BB하단','RSI확인'];}
+  else if(ss>bs+3){vd='🔴 매도 우세 — 익절 또는 관망';vc='var(--rd)';st='다수의 매도 시그널이 감지됩니다. 보유 포지션 분할 익절을 권장합니다.';tg=['분할익절','RSI주의','관망'];}
+  else{vd='🔵 중립 — 추세 확인 후 대응';vc='var(--bl)';st='매수·매도 시그널이 혼재합니다. 추세 확인 후 진입을 권장합니다.';tg=['관망','추세확인','소량관찰'];}
+  const rC=lr==null?'var(--t2)':lr>70?'var(--rd)':lr<30?'var(--gn)':'var(--t)';
+  const rS=lr==null?'-':lr>70?'과매수 ⚠':lr<30?'과매도 ✓':lr>55?'고가권':lr<45?'저가권':'중립';
+  const mC=lm==null?'var(--t2)':lm>(ls||0)?'var(--gn)':'var(--rd)';
+  const bbP=lbu&&lbl?((close[n-1]-lbl)/(lbu-lbl)*100).toFixed(0)+'%':'-';
+  const maC=l50&&l200?(l50>l200?'var(--gn)':'var(--rd)'):'var(--t2)';
+  const maS=l50&&l200?(l50>l200?'골든 ✓':'데드 ⚠'):'-';
+  const tCls={sb:'tbu',pb:'tpb',ss2:'tse',ps2:'tps',dg:'tdg',op:'top'};
+  const tLbl={sb:'강한매수',pb:'분할매수',ss2:'강한매도',ps2:'분할매도',dg:'위험',op:'기회'};
+  document.getElementById('panel').innerHTML=`
+    <div class="ps"><div class="pt">시그널 요약</div><div class="ss">
+      ${Object.entries(cats).map(([k,v])=>`<div class="sr ${k}"><span class="si">${v.i}</span><span class="sl">${v.l}</span><span class="sc">${cnt[k]||0}</span></div>`).join('')}
+    </div></div>
+    <div class="ps"><div class="pt">현재 지표</div><div class="ig">
+      <div class="iv"><div class="ivl">RSI(14)</div><div class="ivn" style="color:${rC}">${lr!=null?lr.toFixed(1):'-'}</div><div class="ivs" style="color:${rC}">${rS}</div></div>
+      <div class="iv"><div class="ivl">MACD</div><div class="ivn" style="color:${mC}">${lm!=null?lm.toFixed(3):'-'}</div><div class="ivs" style="color:${mC}">${lm==null?'-':lm>(ls||0)?'강세 ↑':'약세 ↓'}</div></div>
+      <div class="iv"><div class="ivl">BB 위치</div><div class="ivn">${bbP}</div><div class="ivs" style="color:var(--t2)">0%하단 100%상단</div></div>
+      <div class="iv"><div class="ivl">MA 배열</div><div class="ivn" style="color:${maC}">${maS}</div><div class="ivs" style="color:${maC}">MA50 vs MA200</div></div>
+    </div></div>
+    <div class="ps"><div class="pt">전략 추천</div><div class="stb">
+      <div class="sv" style="color:${vc}">${vd}</div>
+      <div class="st">${st}</div>
+      <div class="stg">${tg.map(t=>`<span class="stag">#${t}</span>`).join('')}</div>
+    </div></div>
+    <div class="ps"><div class="pt">최근 시그널 (${Math.min(AS.length,15)}개)</div><div class="sl2">
+      ${AS.slice(0,15).map(s=>`<div class="si2">
+        <div class="si2h"><span class="sit ${tCls[s.category]}">${tLbl[s.category]}</span><span class="sid">${s.date}</span></div>
+        <div class="sin">${s.name}</div><div class="sdesc">${s.desc}</div>
+      </div>`).join('')||'<div style="color:var(--t3);font-size:10px;text-align:center;padding:12px">시그널 없음</div>'}
+    </div></div>`;}
+window.addEventListener('resize',()=>{if(SD){['mc','rc','dc'].forEach(id=>Plotly.Plots.resize(id));}});
 </script>
-
-
-<noscript>
-  <style>
-    #loadingOverlay{ display:none; }
-    #pageContent{ opacity:1; visibility:visible; transform:none; }
-    body{ overflow:auto; height:auto; }
-  </style>
-</noscript>
-
-  
-<noscript>
-  <!-- JS 꺼져 있으면 본문 보이게 -->
-  <style>#loadingOverlay{display:none} #pageContent{visibility:visible}</style>
-</noscript>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('img').forEach(img => {
-      img.loading = 'lazy';
-      img.decoding = 'async';
-    });
-  });
-</script>
-
-<script>
-(function(){
-  const audio = document.getElementById('player');
-  const overlay = document.getElementById('loadingOverlay');
-
-  function tryPlayOnce(){
-    audio.muted = false;
-    const p = audio.play();
-    if (p && p.catch) p.catch(()=>{});
-    cleanup();
-  }
-  function bind(){
-    const once = { once:true, passive:true };
-    ['pointerdown','touchstart','keydown','wheel'].forEach(t=>{
-      window.addEventListener(t, tryPlayOnce, once);
-      overlay && overlay.addEventListener(t, tryPlayOnce, once);
-    });
-  }
-  function cleanup(){
-    ['pointerdown','touchstart','keydown','wheel'].forEach(t=>{
-      window.removeEventListener(t, tryPlayOnce);
-      overlay && overlay.removeEventListener(t, tryPlayOnce);
-    });
-  }
-  bind();
-})();
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- 공유/복사 영역 -->
-<div class="share-section">
-  <!-- 1. 카카오톡 공유 버튼 -->
-  <a id="kakaotalk-share-btn" class="share-btn kakao" href="javascript:void(0);" aria-label="카카오톡 공유하기">
-    <span class="icon"><img src="images/icon/chat.png" alt="카카오" width=16 height=16 style="margin-top:-3px"></span>
-    카카오톡 공유하기
-  </a>
-
-  <!-- 2. 링크 복사 버튼 -->
-  <button class="share-btn copy" data-link="https://mylove-wedding.info">
-    <span class="icon" style="font-size:1em">🔗</span>
-    링크 복사하기
-  </button>
-</div>
-
-
-
-<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.7/kakao.min.js" integrity="sha384-tJkjbtDbvoxO+diRuDtwRO9JXR7pjWnfjfRn5ePUpl7e7RJCxKCwwnfqUAdXh53p" crossorigin="anonymous"></script>
-
-<script>
-Kakao.init('64c9ee23e4db51f2e977d6cb41ca67ea');
-Kakao.isInitialized();
-</script>
-
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>Kakao JavaScript SDK</title>
-  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.7/kakao.min.js" integrity="sha384-tJkjbtDbvoxO+diRuDtwRO9JXR7pjWnfjfRn5ePUpl7e7RJCxKCwwnfqUAdXh53p" crossorigin="anonymous"></script>
-    <script>
-    // SDK를 초기화 합니다. 사용할 앱의 JavaScript 키를 설정해야 합니다.
-    Kakao.init('64c9ee23e4db51f2e977d6cb41ca67ea');
-
-    // SDK 초기화 여부를 판단합니다.
-    console.log(Kakao.isInitialized());
-  </script>
-  <script>
-    Kakao.Share.createCustomButton({
-      container: '#kakaotalk-share-btn',
-      templateId: 123852,
-      templateArgs: {
-        title: '우리의 결혼식에 소중한 인연을 초대합니다🤍',
-        description: '9월 20일 2시 수원 호텔리츠컨벤션웨딩',
-      },
-    });
-  </script>
-
-  <script>
-  Kakao.Link.sendDefault({
-    objectType: 'feed',
-    content: {
-      title: '우리의 결혼식에 소중한 인연을 초대합니다🤍',
-      description: '9월 20일 2시 수원 호텔리츠컨벤션웨딩',
-      imageUrl:
-        'images/main-background.jpeg',
-      imageWidth: 1200,
-      imageHeight: 630,
-      link: {
-        mobileWebUrl: 'mylove-wedding.info',
-        androidExecutionParams: 'test',
-      },
-    },
-    itemContent: {
-      profileText: '창민🤵🏻 그리고 나연👰🏻‍',
-      profileImageUrl:
-        'images/main-background.jpeg',
-    },
-    buttons: [
-      {
-        title: '모바일 청첩장',
-        link: {
-          mobileWebUrl: 'https://mylove-wedding.info',
-          webUrl: 'https://mylove-wedding.info',
-        },
-      },
-    ],
-  });
-</script>
-</head>
-<body></body>
-</html>
-
-
-
 </body>
 </html>
-
- 
