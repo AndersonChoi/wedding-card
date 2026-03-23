@@ -91,6 +91,9 @@ header{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgb
 .up{color:var(--gn);background:rgba(0,230,118,.1)}.dn{color:var(--rd);background:rgba(255,23,68,.1)}
 .im{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t2)}
 .ak-wrap{display:flex;align-items:center;gap:5px;background:var(--sf);border:1px solid var(--br);border-radius:6px;padding:0 8px;transition:all .2s}.ak-wrap:focus-within{border-color:var(--bl);box-shadow:0 0 12px rgba(41,121,255,.2)}#ak{background:none;border:none;outline:none;color:var(--t);font-family:'JetBrains Mono',monospace;font-size:10px;width:140px;padding:7px 0}#ak::placeholder{color:var(--t3)}.ak-link{font-size:9px;color:var(--bl);white-space:nowrap;text-decoration:none;opacity:.8}.ak-link:hover{opacity:1}
+.prc{background:var(--s2);border:1px solid var(--br);border-radius:6px;overflow:hidden}.prr{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.03)}.prr:last-child{border-bottom:none}.prr.cur{background:rgba(41,121,255,.08);border-left:2px solid var(--bl)}.prd{width:6px;height:6px;border-radius:50%;flex-shrink:0}.prlb{font-size:8px;color:var(--t3);font-weight:600;width:80px;font-family:'JetBrains Mono',monospace;letter-spacing:.3px;line-height:1.3}.prv{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;flex:1}.prpct{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;min-width:44px;text-align:right}
+@media(max-width:768px){body{height:auto;overflow-y:auto;overflow-x:hidden}.layout{flex-direction:column;height:auto}.ca{border-right:none;border-bottom:1px solid var(--br)}.panel{width:100%;max-height:none}#rc,#dc{height:70px}.hints{display:none}.ak-wrap+.ak-wrap{display:none}header{gap:6px;padding:8px 10px}.sw{max-width:none;flex:1 1 160px}.ig{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:480px){.rbs,.ibs{display:none}}
 </style>
 </head>
 <body>
@@ -304,8 +307,8 @@ function detectSig(d,inds){
     if(m&&ms&&mp&&msp&&mp<msp&&m>ms&&r&&r<50)add(i,'sb','MACD 상향 돌파',`MACD(${m.toFixed(3)})가 시그널 상향 돌파.`,3,['MACD','RSI']);
     if(bl&&l[i-1]<bl*1.005&&c[i]>op[i]&&vr>1.2)add(i,'sb','BB 하단 반등',`BB 하단(${bl.toFixed(0)}) 터치 후 양봉. 거래량 +${((vr-1)*100).toFixed(0)}%.`,3,['BB','VOL']);
     // 분할매수
-    if(r&&rp&&r>=35&&r<=45&&r>rp)add(i,'pb','RSI 저가권 반등',`RSI(${r.toFixed(1)}) 저가 구간 반등. 분할매수 구간.`,2,['RSI']);
-    if(bl&&p<bl*1.02&&p>bl)add(i,'pb','BB 하단 근접',`현재가 BB 하단(${bl.toFixed(0)}) 근접. 1차 분할매수.`,2,['BB']);
+    if(r&&rp&&rp<35&&r>=35&&r<50)add(i,'pb','RSI 과매도 탈출',`RSI ${rp.toFixed(1)}→${r.toFixed(1)}, 30선 상향 돌파. 분할매수 시작.`,2,['RSI']);
+    if(bl&&B.lo[i-1]&&p<bl*1.02&&p>bl&&pp>=B.lo[i-1]*1.02)add(i,'pb','BB 하단 첫 진입',`BB 하단(${bl.toFixed(0)}) 진입. 1차 분할매수 구간.`,2,['BB']);
     if(k&&kp&&k<25&&k>kp)add(i,'pb','스토캐스틱 과매도 반등',`스토캐스틱 K(${k.toFixed(1)}) 반등. 단기 저점.`,2,['Stoch']);
     if(s20[i]&&Math.abs(p-s20[i])/s20[i]<0.01&&p>=s20[i]&&c[i]>op[i])add(i,'pb','MA20 지지',`MA20(${s20[i].toFixed(0)}) 지지 후 양봉.`,1,['MA20']);
     if(s20[i]&&Math.abs(p-s20[i])/s20[i]<0.01&&p<=s20[i]&&c[i]<op[i])add(i,'ps2','MA20 저항',`MA20(${s20[i].toFixed(0)}) 저항 후 음봉.`,1,['MA20']);
@@ -315,8 +318,8 @@ function detectSig(d,inds){
     if(m&&ms&&mp&&msp&&mp>msp&&m<ms&&r&&r>50)add(i,'ss2','MACD 하향 돌파',`MACD(${m.toFixed(3)}) 시그널 하향 돌파.`,3,['MACD']);
     if(bu&&h[i-1]>bu&&c[i]<op[i])add(i,'ss2','BB 상단 후 음봉',`BB 상단(${bu.toFixed(0)}) 돌파 후 음봉.`,3,['BB']);
     // 분할매도
-    if(r&&r>=65&&r<=75)add(i,'ps2','RSI 고가권 익절',`RSI(${r.toFixed(1)}) 고가 구간. 일부 익절 고려.`,2,['RSI']);
-    if(bu&&p>bu*.98&&p<bu)add(i,'ps2','BB 상단 근접 익절',`BB 상단(${bu.toFixed(0)}) 근접. 분할 익절.`,2,['BB']);
+    if(r&&rp&&rp<65&&r>=65&&r<80)add(i,'ps2','RSI 과매수 진입',`RSI ${rp.toFixed(1)}→${r.toFixed(1)}, 65선 상향. 일부 익절 고려.`,2,['RSI']);
+    if(bu&&B.up[i-1]&&p>bu*.98&&p<bu&&pp<=B.up[i-1]*.98)add(i,'ps2','BB 상단 첫 진입',`BB 상단(${bu.toFixed(0)}) 도달. 분할 익절 구간.`,2,['BB']);
     if(k&&kp&&k>75&&k<kp)add(i,'ps2','스토캐스틱 과매수 반락',`스토캐스틱 K(${k.toFixed(1)}) 반락. 단기 고점.`,2,['Stoch']);
     // 위험
     if(r&&r>80)add(i,'dg','RSI 극단 과매수 ⚠',`RSI ${r.toFixed(1)} 극도 과매수. 신규 매수 위험.`,3,['RSI']);
@@ -331,7 +334,7 @@ function detectSig(d,inds){
   CP.forEach(({i,n:nm,d:dr})=>{if(i>=c.length-20){
     const cat=dr==='b'?'pb':dr==='s'?'ps2':'op';
     add(i,cat,'캔들: '+nm,nm+'패턴. '+(dr==='b'?'단기 상승 가능성.':dr==='s'?'단기 하락 가능성.':'방향 전환 신호.'),1,['캔들']);}});
-  return sigs.sort((a,b)=>b.i-a.i);}
+  const dk={};return sigs.sort((a,b)=>b.i-a.i).filter(s=>{const k=s.category+'_'+Math.floor(s.i/4);return dk[k]?false:(dk[k]=1,true);});}
 // ══ PROCESS ══
 function process(){
   const{close,high,low,open,volume}=SD;
@@ -356,7 +359,7 @@ function drawCharts(){
     return{type:'scatter',mode:'markers',name:cNm[cat],x:ss.map(s=>s.date),
       y:ss.map(s=>ab?high[s.i]*1.014:low[s.i]*0.986),
       marker:{symbol:c.sym,color:c.col,size:c.sz,line:{width:1.5,color:c.col}},
-      text:ss.map(s=>`<b>${s.name}</b><br>${s.desc}<br><i style='opacity:.6'>지표: ${s.ind.join(', ')}</i>`),
+      text:ss.map(s=>`<b>${s.name}</b><br>📍 ${SD.currency==='KRW'?Math.round(s.price).toLocaleString('ko-KR')+'원':'$'+s.price.toFixed(2)}<br>${s.desc}<br><i style='opacity:.6'>지표: ${s.ind.join(', ')}</i>`),
       hovertemplate:'%{text}<extra></extra>',showlegend:true};});
   const tr=[{type:'candlestick',x:dates,open,high,low,close,
     increasing:{line:{color:'#00e676',width:1.5},fillcolor:'#00e676'},
@@ -396,7 +399,7 @@ function drawCharts(){
     hovermode:'x unified',showlegend:false,hoverlabel:{bgcolor:'rgba(13,21,38,.95)',bordercolor:'#1a2d4a',font:{family:ff,size:10,color:'#cdd9f0'}}},
   {responsive:true,displayModeBar:false});
   const cw=document.querySelector('.cw');
-  document.getElementById('mc').style.height=Math.max(230,cw.clientHeight-180)+'px';}
+  const _mob=window.innerWidth<=768;document.getElementById('mc').style.height=(_mob?Math.max(260,window.innerWidth*.55):Math.max(230,cw.clientHeight-180))+'px';}
 // ══ INFOBAR ══
 function updateInfobar(){
   const{ticker,name,currentPrice:cp,previousClose:pc,currency:cur}=SD;
@@ -410,8 +413,8 @@ function updateInfobar(){
     <span class="im">${AS.length}개 시그널 · ${SD.dates.length}일</span>`;}
 // ══ PANEL ══
 function drawPanel(){
-  const{close,_i:{R,B,s50,s200,M}}=SD,n=close.length;
-  const lr=R[n-1],lbu=B.up[n-1],lbl=B.lo[n-1],lm=M.ml[n-1],ls=M.sl[n-1],l50=s50[n-1],l200=s200[n-1];
+  const{close,_i:{R,B,s20,s50,s200,M}}=SD,n=close.length;
+  const lr=R[n-1],lbu=B.up[n-1],lbl=B.lo[n-1],lbm=B.mid[n-1],lm=M.ml[n-1],ls=M.sl[n-1],l50=s50[n-1],l200=s200[n-1],l20=s20[n-1];
   const cats={sb:{l:'강한 매수',i:'▲'},pb:{l:'분할 매수',i:'△'},ss2:{l:'강한 매도',i:'▼'},ps2:{l:'분할 매도',i:'▽'},dg:{l:'위험 신호',i:'⚠'},op:{l:'기회 신호',i:'◆'}};
   const cnt={};AS.forEach(s=>{cnt[s.category]=(cnt[s.category]||0)+1;});
   const bs=(cnt.sb||0)*3+(cnt.pb||0),ss=(cnt.ss2||0)*3+(cnt.ps2||0),ds=cnt.dg||0;
@@ -428,6 +431,17 @@ function drawPanel(){
   const maS=l50&&l200?(l50>l200?'골든 ✓':'데드 ⚠'):'-';
   const tCls={sb:'tbu',pb:'tpb',ss2:'tse',ps2:'tps',dg:'tdg',op:'top'};
   const tLbl={sb:'강한매수',pb:'분할매수',ss2:'강한매도',ps2:'분할매도',dg:'위험',op:'기회'};
+  const _cp=SD.currentPrice,_kr=SD.currency==='KRW';
+  const _fp=v=>v==null?'-':(_kr?Math.round(v).toLocaleString('ko-KR')+'원':'$'+v.toFixed(2));
+  const _pct=v=>v==null?'':((v/_cp-1)*100>=0?'+':'')+((v/_cp-1)*100).toFixed(1)+'%';
+  const _lvls=[
+    {l:'2차 목표 (BB상단)',v:lbu,c:'#d500f9'},
+    {l:'1차 목표 (BB중심)',v:lbm,c:'#2979ff'},
+    {l:'현재가',v:_cp,c:'var(--t)',cur:true},
+    {l:'1차 매수 (BB하단)',v:lbl,c:'#00e676'},
+    {l:'2차 매수 (추가↓3%)',v:lbl?+(lbl*.97).toFixed(2):null,c:'#69f0ae'},
+    {l:'손절 기준',v:l200?+(l200*.97).toFixed(2):(lbl?+(lbl*.95).toFixed(2):null),c:'#ff9100'},
+  ].filter(x=>x.v!=null).sort((a,b)=>b.v-a.v);
   document.getElementById('panel').innerHTML=`
     <div class="ps"><div class="pt">시그널 요약</div><div class="ss">
       ${Object.entries(cats).map(([k,v])=>`<div class="sr ${k}"><span class="si">${v.i}</span><span class="sl">${v.l}</span><span class="sc">${cnt[k]||0}</span></div>`).join('')}
@@ -437,6 +451,9 @@ function drawPanel(){
       <div class="iv"><div class="ivl">MACD</div><div class="ivn" style="color:${mC}">${lm!=null?lm.toFixed(3):'-'}</div><div class="ivs" style="color:${mC}">${lm==null?'-':lm>(ls||0)?'강세 ↑':'약세 ↓'}</div></div>
       <div class="iv"><div class="ivl">BB 위치</div><div class="ivn">${bbP}</div><div class="ivs" style="color:var(--t2)">0%하단 100%상단</div></div>
       <div class="iv"><div class="ivl">MA 배열</div><div class="ivn" style="color:${maC}">${maS}</div><div class="ivs" style="color:${maC}">MA50 vs MA200</div></div>
+    </div></div>
+    <div class="ps"><div class="pt">매매 가격대</div><div class="prc">
+      ${_lvls.map(x=>`<div class="prr${x.cur?' cur':''}"><div class="prd" style="background:${x.c}"></div><div class="prlb">${x.l}</div><div class="prv" style="color:${x.c}">${_fp(x.v)}</div><div class="prpct" style="color:${x.cur?'var(--t3)':x.v>_cp?'var(--gn)':'var(--rd)'}">${x.cur?'현재':'  '+_pct(x.v)}</div></div>`).join('')}
     </div></div>
     <div class="ps"><div class="pt">전략 추천</div><div class="stb">
       <div class="sv" style="color:${vc}">${vd}</div>
